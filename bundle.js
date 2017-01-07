@@ -6,6 +6,7 @@ function processExpr(exprObj, idx) {
     var link = '<a href="#e' + (idx+1) + '">' + (idx+1) + '.</a>';
     document.write('<h2 id="e' + (idx+1) + '">' + link + ' ' + exprObj.nom + '</h2>');
     document.write(clubexpr.renderExprAsLisp(exprObj.expr));
+    document.write("$$" + clubexpr.renderExprAsLaTeX(exprObj.expr) + "$$");
     if (exprObj.conv.length) {
         document.write("  conventions : ");
         document.write(exprObj.conv.join(', '));
@@ -65,7 +66,7 @@ var parenthesize = function(input, list) {
 };
 
 /**
- * @summary Renders an expression Lisp source .
+ * @summary Renders an expression Lisp source.
  *
  * @param expr An expression
  * @return Lisp source, aka Code Club
@@ -78,6 +79,85 @@ exports.renderExprAsLisp = function (expr) {
     } else {
         return expr;
     }
+}
+
+/**
+ * @summary Renders an expression LaTex source.
+ *
+ * @param expr An expression
+ * @param parentCmd An optional type of expr, aka command
+ * @return LaTex source
+ */
+exports.renderExprAsLaTeX = function (expr, parentCmd) {
+  if (typeof expr === 'object') {
+    var cmd = expr[0];
+    var args = expr.slice(1).map(function (expr) {
+        return exports.renderExprAsLaTeX(expr, cmd);
+    });
+    var latex = '';
+    if (cmd === 'Somme'    ) latex = args.join('+');
+    if (cmd === 'Diff'     ) latex = args[0] + "-" + args[1];
+    if (cmd === 'Produit'  ) {
+        var lastArg = args[0];
+        latex = args[0];
+        for (var i = 1; i < args.length; i++) {
+            var arg = args[i];
+            if (!isNaN(parseInt(lastArg)) && isNaN(parseInt(arg)))
+                latex = latex + arg;
+            else
+                latex = latex + '×' + arg;
+            lastArg = arg;
+        }
+    }
+    if (cmd === 'Quotient' ) latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
+    if (cmd === 'Opposé'   ) latex = "-" + args[0];
+    if (cmd === 'Inverse'  ) latex = "\\frac{1}{" + args[0] + "}";
+    if (cmd === 'Carré'    ) latex = args[0] + "^2";
+    if (cmd === 'Puissance') latex = args[0] + "^" + args[1];
+    if (cmd === 'Racine'   ) latex = "\\sqrt{" + args[0] + "}";
+    if (latex === '') return "Unknown cmd: " + cmd;
+    if (parens(cmd, parentCmd)) latex = '\\left(' + latex + '\\right)';
+    return latex;
+  } else {
+      return expr;
+  }
+}
+
+/**
+ * @summary Tests if a value is in an array.
+ *
+ * @param obj The value
+ * @param arr The array
+ * @return a boolean
+ */
+var belongsTo = function (obj, arr) {
+    return arr.indexOf(obj) !== -1;
+}
+
+/**
+ * @summary Tests if the sub-expr should be surrounded with parens.
+ *
+ * @param cmd The current type of expr, aka command
+ * @param parentCmd The parent command
+ * @return a boolean
+ */
+var parens = function (cmd, parentCmd) {
+    var S  = 'Somme';
+    var D  = 'Diff';
+    var P  = 'Produit';
+    var Q  = 'Quotient';
+    var O  = 'Opposé';
+    var I  = 'Inverse';
+    var C  = 'Carré';
+    var Pu = 'Puissance';
+    var R  = 'Racine';
+    if (belongsTo(cmd, [S,D])) {
+        return belongsTo(parentCmd, [D,P,O,C,Pu,R]);
+    }
+    if (belongsTo(cmd, [P,Q,O,I])) {
+        return belongsTo(parentCmd, [C,Pu]);
+    }
+    return false;
 }
 
 exports.expressions = function () {
