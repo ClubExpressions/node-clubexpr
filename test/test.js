@@ -51,3 +51,48 @@ describe('#renderingParsingRoundTrip', function() {
     });
 });
 
+var renderExprAsLaTeX = clubExpr.renderExprAsLaTeX;
+
+describe('#renderExprAsLaTeX', function() {
+    it('should render the official expressions correctly', function() {
+        var exprsRenderedAsLaTeX = [
+            '1+2',
+            'a+1',
+            '1+a',
+            'a+b',
+            '1-2',
+            'a-1',
+            '1-a',
+            'a-b',
+            '1×2',
+            '1a',
+            'a×1',
+            'a×b',
+            '\\frac{a}{1}',
+            '\\frac{1}{a}',
+            '1^2',
+            'a^2',
+            'a^4',
+            '\\frac{1}{a}',
+            '-a',
+            '1\\left(a+2\\right)',
+            '1\\left(a-2\\right)',
+            '1+2a',
+            '1a-2',
+            '1+\\frac{a}{2}',
+            '-a-1',
+            '-\\left(a-1\\right)',
+            '1-\\left(2+a\\right)',
+            'a-1+2',
+            '\\frac{a+b}{1}',
+            '\\frac{1}{a+1}',
+            '\\frac{1a}{2}',
+            '-1a',
+            '1+\\frac{2}{3a+4}'];
+        expressions.forEach(function (exprObj, idx) {
+            var expr = exprObj.expr;
+            equal(renderExprAsLaTeX(expr), exprsRenderedAsLaTeX[idx]);
+        });
+    });
+});
+
