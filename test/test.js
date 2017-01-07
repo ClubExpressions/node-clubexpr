@@ -4,7 +4,9 @@ var chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 var sdEqual = chai.assert.shallowDeepEqual;
 
-var parse = require('../index').parse;
+var clubExpr = require('../index');
+
+var parse = clubExpr.parse;
 
 describe('#parse', function() {
     it('should parse a single expression with one arg', function() {
