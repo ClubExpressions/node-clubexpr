@@ -46,3 +46,19 @@ var parenthesize = function(input, list) {
   }
 };
 
+/**
+ * @summary Renders an expression Lisp source.
+ *
+ * @param expr An expression
+ * @return Lisp source, aka Code Club
+ */
+exports.renderExprAsLisp = function (expr) {
+    if (typeof expr === 'object') {
+        var cmd = expr[0];
+        var args = expr.slice(1).map(exports.renderExprAsLisp);
+        return '(' + cmd + ' ' + args.join(' ') + ')';
+    } else {
+        return expr;
+    }
+}
+
