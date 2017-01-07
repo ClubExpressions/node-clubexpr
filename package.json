@@ -4,6 +4,7 @@
   "description": "Expressions and utilities for the Club of Expressions",
   "main": "index.js",
   "scripts": {
+    "build-demo": "browserify demo.js > bundle.js",
     "test": "mocha --reporter spec"
   },
   "repository": {
