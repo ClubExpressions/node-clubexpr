@@ -39,3 +39,15 @@ describe('#renderExprAsLisp', function() {
     });
 });
 
+var expressions = clubExpr.expressions;
+
+describe('#renderingParsingRoundTrip', function() {
+    it('should round trip on all official expressions', function() {
+        expressions.forEach(function (exprObj) {
+            var expr = exprObj.expr;
+            // Here [ 'Somme', '1', '2' ] equals [ 'Somme', 1, 2 ]
+            sdEqual(parse(renderExprAsLisp(expr)), expr);
+        });
+    });
+});
+
