@@ -4,7 +4,7 @@
   "description": "Expressions and utilities for the Club of Expressions",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/ClubExpressions/node-clubexpr/issues"
   },
-  "homepage": "https://github.com/ClubExpressions/node-clubexpr#readme"
+  "homepage": "https://github.com/ClubExpressions/node-clubexpr#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-shallow-deep-equal": "^1.4.4",
+    "mocha": "^3.2.0"
+  }
 }
