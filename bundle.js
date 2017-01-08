@@ -11,6 +11,10 @@ function processExpr(exprObj, idx) {
         document.write("  conventions : ");
         document.write(exprObj.conv.join(', '));
     }
+    var props = clubexpr.properties(exprObj.expr);
+    document.write("<h3>Inspection</h3>");
+    document.write("depth: " + props.depth + "<br>");
+    document.write("leaves: " + props.leaves + "<br>");
 }
 
 clubexpr.expressions.forEach(processExpr);
@@ -160,6 +164,38 @@ var parens = function (cmd, parentCmd) {
     return false;
 }
 
+/**
+ * @summary Inspects an expression.
+ *
+ * @param expr The expression to inspect
+ * @param parentCmd An optional type of expr, aka command
+ * @return An object with all the information
+ */
+exports.properties = function (expr, parentCmd) {
+  if (typeof expr === 'object') {
+    var newProps = {
+      depth: 0,
+      leaves: 0
+    };
+    var cmd = expr[0];
+    var propsArray = expr.slice(1).map(function (expr) {
+      return exports.properties(expr, cmd);
+    });
+    for (var i = 0; i < propsArray.length; i += 1) {
+      var props = propsArray[i];
+      if (props.depth > newProps.depth) newProps.depth = props.depth;
+      newProps.leaves += props.leaves;
+    }
+    newProps.depth += 1;
+    return newProps;
+  } else {
+    return {
+      depth: 0,
+      leaves: 1
+    };
+  }
+}
+
 exports.expressions = function () {
   // For convenience, definitions are done with variables (avoid quotes).
   var a = 'a';
@@ -259,31 +295,31 @@ exports.expressions = function () {
   {"nom" : "Opposé",
    "conv": [],
    "expr": [O,a]},
-  {"nom" : "Produit d’un coeff avec une somme",
+  {"nom" : "Produit d’un nombre avec une somme",
    "conv": [P],
    "expr": [P,1,[S,a,2]]},
-  {"nom" : "Produit d’un coeff avec une différence",
+  {"nom" : "Produit d’un nombre avec une différence",
    "conv": [P],
    "expr": [P,1,[D,a,2]]},
-  {"nom" : "Somme d’un coeff avec un produit",
+  {"nom" : "Somme d’un nombre avec un produit",
    "conv": [MD,X],
    "expr": [S,1,[P,2,a]]},
-  {"nom" : "Différence entre multiple et coeff",
+  {"nom" : "Différence entre multiple et nombre",
    "conv": [MD,X],
    "expr": [D,[P,1,a],2]},
-  {"nom" : "Somme d’un coeff avec un quotient",
+  {"nom" : "Somme d’un nombre avec un quotient",
    "conv": [MD],
    "expr": [S,1,[Q,a,2]]},
-  {"nom" : "Différence entre un opposé et un coeff",
+  {"nom" : "Différence entre un opposé et un nombre",
    "conv": [O],
    "expr": [D,[O,a],1]},
   {"nom" : "Opposé d’une différence",
    "conv": [P],
    "expr": [O,[D,a,1]]},
-  {"nom" : "Différence entre un coeff et une somme",
+  {"nom" : "Différence entre un nombre et une somme",
    "conv": [P],
    "expr": [D,1,[S,2,a]]},
-  {"nom" : "Somme d’une différence avec un coeff",
+  {"nom" : "Somme d’une différence avec un nombre",
    "conv": [GD],
    "expr": [S,[D,a,1],2]},
   {"nom" : "Somme divisée par un nombre",
