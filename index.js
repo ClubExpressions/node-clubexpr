@@ -152,7 +152,9 @@ exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
     var newProps = {
       depth: 0,
-      leaves: 0
+      leaves: 0,
+      letters: 0,
+      numbers: 0
     };
     var cmd = expr[0];
     var propsArray = expr.slice(1).map(function (expr) {
@@ -162,13 +164,18 @@ exports.properties = function (expr, parentCmd) {
       var props = propsArray[i];
       if (props.depth > newProps.depth) newProps.depth = props.depth;
       newProps.leaves += props.leaves;
+      newProps.letters += props.letters;
+      newProps.numbers += props.numbers;
     }
     newProps.depth += 1;
     return newProps;
   } else {
+    var aLetter = isNaN(parseInt(expr));
     return {
       depth: 0,
-      leaves: 1
+      leaves: 1,
+      letters:  aLetter? 1 : 0,
+      numbers: !aLetter? 1 : 0
     };
   }
 }

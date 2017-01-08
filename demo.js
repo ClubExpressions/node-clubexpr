@@ -14,6 +14,8 @@ function processExpr(exprObj, idx) {
     document.write("<h3>Inspection</h3>");
     document.write("depth: " + props.depth + "<br>");
     document.write("leaves: " + props.leaves + "<br>");
+    document.write("letters: " + props.letters + "<br>");
+    document.write("numbers: " + props.numbers + "<br>");
 }
 
 clubexpr.expressions.forEach(processExpr);
