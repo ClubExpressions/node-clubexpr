@@ -150,16 +150,19 @@ var parens = function (cmd, parentCmd) {
  */
 exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
+    // Init of the returned object
     var newProps = {
       depth: 0,
       leaves: 0,
       letters: 0,
       numbers: 0
     };
+    // Recursion
     var cmd = expr[0];
     var propsArray = expr.slice(1).map(function (expr) {
       return exports.properties(expr, cmd);
     });
+    // Process children
     for (var i = 0; i < propsArray.length; i += 1) {
       var props = propsArray[i];
       if (props.depth > newProps.depth) newProps.depth = props.depth;
@@ -170,6 +173,7 @@ exports.properties = function (expr, parentCmd) {
     newProps.depth += 1;
     return newProps;
   } else {
+    // A leaf
     var aLetter = isNaN(parseInt(expr));
     return {
       depth: 0,
