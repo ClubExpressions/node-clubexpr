@@ -180,6 +180,27 @@ exports.properties = function (expr, parentCmd) {
   }
 }
 
+/**
+ * @summary Builds an expression with specified letters and numbers.
+ *
+ * @param expr The expression template to use
+ * @param obj The elements used to replace the old ones
+ */
+exports.replaceValuesWith = function (expr, obj) {
+  if (typeof expr === 'object') {
+    var cmd = expr[0];
+    var args = expr.slice(1).map(function (expr) {
+      return exports.replaceValuesWith(expr, obj);
+    });
+    args.unshift(cmd);
+    return args;
+  } else {
+      var newLeaf = obj[expr];
+      if (typeof newLeaf !== 'undefined') return newLeaf;
+      return expr;
+  }
+}
+
 exports.expressions = function () {
   // For convenience, definitions are done with variables (avoid quotes).
   var a = 'a';
