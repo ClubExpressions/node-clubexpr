@@ -201,6 +201,28 @@ exports.replaceValuesWith = function (expr, obj) {
   }
 }
 
+/**
+ * @summary Builds a random integers array (from 2 to `max`, shuffled).
+ *
+ * @param max The max integer to include
+ * @return The array of integers
+ */
+exports.randomNumbers = function (max) {
+    // http://stackoverflow.com/questions/3895478
+    var ints = Array.apply(null, Array(max-1)).map(function (_, i) {return i+2;});
+    var counter = ints.length;
+    while (counter > 0) {
+        var index = Math.floor(Math.random() * counter);
+        counter--;
+        // swap
+        var temp = ints[counter];
+        ints[counter] = ints[index];
+        ints[index] = temp;
+    }
+    ints.unshift(0);  // The first number in an expression is 1.
+    return ints;
+}
+
 exports.expressions = function () {
   // For convenience, definitions are done with variables (avoid quotes).
   var a = 'a';
