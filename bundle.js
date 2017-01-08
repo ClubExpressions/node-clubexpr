@@ -3,18 +3,21 @@ var clubexpr = require('./index');
 
 // Callback for rendering each expression
 function processExpr(exprObj, idx) {
+    var randExpr = clubexpr.replaceValuesWith(exprObj.expr, clubexpr.randomNumbers(9));
     var link = '<a href="#e' + (idx+1) + '">' + (idx+1) + '.</a>';
     document.write('<h2 id="e' + (idx+1) + '">' + link + ' ' + exprObj.nom + '</h2>');
-    document.write(clubexpr.renderExprAsLisp(exprObj.expr));
-    document.write("$$" + clubexpr.renderExprAsLaTeX(exprObj.expr) + "$$");
+    document.write(clubexpr.renderExprAsLisp(randExpr));
+    document.write("$$" + clubexpr.renderExprAsLaTeX(randExpr) + "$$");
     if (exprObj.conv.length) {
         document.write("  conventions : ");
         document.write(exprObj.conv.join(', '));
     }
-    var props = clubexpr.properties(exprObj.expr);
+    var props = clubexpr.properties(randExpr);
     document.write("<h3>Inspection</h3>");
     document.write("depth: " + props.depth + "<br>");
     document.write("leaves: " + props.leaves + "<br>");
+    document.write("letters: " + props.letters + "<br>");
+    document.write("numbers: " + props.numbers + "<br>");
 }
 
 clubexpr.expressions.forEach(processExpr);
@@ -175,7 +178,9 @@ exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
     var newProps = {
       depth: 0,
-      leaves: 0
+      leaves: 0,
+      letters: 0,
+      numbers: 0
     };
     var cmd = expr[0];
     var propsArray = expr.slice(1).map(function (expr) {
@@ -185,15 +190,63 @@ exports.properties = function (expr, parentCmd) {
       var props = propsArray[i];
       if (props.depth > newProps.depth) newProps.depth = props.depth;
       newProps.leaves += props.leaves;
+      newProps.letters += props.letters;
+      newProps.numbers += props.numbers;
     }
     newProps.depth += 1;
     return newProps;
   } else {
+    var aLetter = isNaN(parseInt(expr));
     return {
       depth: 0,
-      leaves: 1
+      leaves: 1,
+      letters:  aLetter? 1 : 0,
+      numbers: !aLetter? 1 : 0
     };
   }
+}
+
+/**
+ * @summary Builds an expression with specified letters and numbers.
+ *
+ * @param expr The expression template to use
+ * @param obj The elements used to replace the old ones
+ */
+exports.replaceValuesWith = function (expr, obj) {
+  if (typeof expr === 'object') {
+    var cmd = expr[0];
+    var args = expr.slice(1).map(function (expr) {
+      return exports.replaceValuesWith(expr, obj);
+    });
+    args.unshift(cmd);
+    return args;
+  } else {
+      var newLeaf = obj[expr];
+      if (typeof newLeaf !== 'undefined') return newLeaf;
+      return expr;
+  }
+}
+
+/**
+ * @summary Builds a random integers array (from 2 to `max`, shuffled).
+ *
+ * @param max The max integer to include
+ * @return The array of integers
+ */
+exports.randomNumbers = function (max) {
+    // http://stackoverflow.com/questions/3895478
+    var ints = Array.apply(null, Array(max-1)).map(function (_, i) {return i+2;});
+    var counter = ints.length;
+    while (counter > 0) {
+        var index = Math.floor(Math.random() * counter);
+        counter--;
+        // swap
+        var temp = ints[counter];
+        ints[counter] = ints[index];
+        ints[index] = temp;
+    }
+    ints.unshift(0);  // The first number in an expression is 1.
+    return ints;
 }
 
 exports.expressions = function () {
