@@ -141,6 +141,33 @@ var parens = function (cmd, parentCmd) {
     return false;
 }
 
+/**
+ * @summary Inspects an expression.
+ *
+ * @param expr The expression to inspect
+ * @param parentCmd An optional type of expr, aka command
+ * @return An object with all the information
+ */
+exports.properties = function (expr, parentCmd) {
+  if (typeof expr === 'object') {
+    var props = {
+      leaves: 0
+    };
+    var cmd = expr[0];
+    var propsArray = expr.slice(1).map(function (expr) {
+      return exports.properties(expr, cmd);
+    });
+    console.log(expr);
+    console.log(propsArray);
+    for (var i = 0; i < propsArray.length; i += 1) {
+      props.leaves += propsArray[i].leaves;
+    }
+    return props;
+  } else {
+    return {leaves: 1};
+  }
+}
+
 exports.expressions = function () {
   // For convenience, definitions are done with variables (avoid quotes).
   var a = 'a';
