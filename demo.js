@@ -12,6 +12,7 @@ function processExpr(exprObj, idx) {
     }
     var props = clubexpr.properties(exprObj.expr);
     document.write("<h3>Inspection</h3>");
+    document.write("depth: " + props.depth + "<br>");
     document.write("leaves: " + props.leaves + "<br>");
 }
 

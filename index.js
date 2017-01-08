@@ -151,6 +151,7 @@ var parens = function (cmd, parentCmd) {
 exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
     var newProps = {
+      depth: 0,
       leaves: 0
     };
     var cmd = expr[0];
@@ -159,11 +160,14 @@ exports.properties = function (expr, parentCmd) {
     });
     for (var i = 0; i < propsArray.length; i += 1) {
       var props = propsArray[i];
+      if (props.depth > newProps.depth) newProps.depth = props.depth;
       newProps.leaves += props.leaves;
     }
+    newProps.depth += 1;
     return newProps;
   } else {
     return {
+      depth: 0,
       leaves: 1
     };
   }
