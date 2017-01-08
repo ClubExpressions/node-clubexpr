@@ -150,21 +150,22 @@ var parens = function (cmd, parentCmd) {
  */
 exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
-    var props = {
+    var newProps = {
       leaves: 0
     };
     var cmd = expr[0];
     var propsArray = expr.slice(1).map(function (expr) {
       return exports.properties(expr, cmd);
     });
-    console.log(expr);
-    console.log(propsArray);
     for (var i = 0; i < propsArray.length; i += 1) {
-      props.leaves += propsArray[i].leaves;
+      var props = propsArray[i];
+      newProps.leaves += props.leaves;
     }
-    return props;
+    return newProps;
   } else {
-    return {leaves: 1};
+    return {
+      leaves: 1
+    };
   }
 }
 

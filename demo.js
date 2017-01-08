@@ -10,6 +10,9 @@ function processExpr(exprObj, idx) {
         document.write("  conventions : ");
         document.write(exprObj.conv.join(', '));
     }
+    var props = clubexpr.properties(exprObj.expr);
+    document.write("<h3>Inspection</h3>");
+    document.write("leaves: " + props.leaves + "<br>");
 }
 
 clubexpr.expressions.forEach(processExpr);
