@@ -83,7 +83,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd) {
         latex = args[0];
         for (var i = 1; i < args.length; i++) {
             var arg = args[i];
-            if (!isNaN(parseInt(lastArg)) && isNaN(parseInt(arg)))
+            if (isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg))
                 latex = latex + arg;
             else
                 latex = latex + '×' + arg;
@@ -307,6 +307,9 @@ exports.expressions = function () {
   {"nom" : "Produit de deux lettres",
    "conv": [],
    "expr": [P,a,b]},
+  {"nom" : "Produit de deux lettres identiques",
+   "conv": [],
+   "expr": [P,a,a]},
   {"nom" : "Division par un nombre",
    "conv": [],
    "expr": [Q,a,1]},
