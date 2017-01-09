@@ -8,7 +8,7 @@ function processExpr(exprObj, idx) {
     document.write(clubexpr.renderExprAsLisp(randExpr));
     document.write("$$" + clubexpr.renderExprAsLaTeX(randExpr) + "$$");
     if (exprObj.conv.length) {
-        document.write("  conventions : ");
+        document.write("conventions : ");
         document.write(exprObj.conv.join(', '));
     }
     var props = clubexpr.properties(randExpr);
