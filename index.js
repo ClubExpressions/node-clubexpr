@@ -159,7 +159,8 @@ exports.properties = function (expr, parentCmd) {
     };
     // Recursion
     var cmd = expr[0];
-    var propsArray = expr.slice(1).map(function (expr) {
+    var args = expr.slice(1);
+    var propsArray = args.map(function (expr) {
       return exports.properties(expr, cmd);
     });
     // Process children
