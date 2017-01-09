@@ -62,6 +62,10 @@ exports.renderExprAsLisp = function (expr) {
     }
 }
 
+var skipMultSign = function (lastArg, arg) {
+    return isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg);
+}
+
 /**
  * @summary Renders an expression LaTex source.
  *
@@ -83,7 +87,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd) {
         latex = args[0];
         for (var i = 1; i < args.length; i++) {
             var arg = args[i];
-            if (isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg))
+            if (skipMultSign(lastArg, arg))
                 latex = latex + arg;
             else
                 latex = latex + '×' + arg;
