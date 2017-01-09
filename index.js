@@ -172,6 +172,7 @@ exports.properties = function (expr, parentCmd) {
       newProps.numbers += props.numbers;
     }
     newProps.depth += 1;
+    // Return
     return newProps;
   } else {
     // A leaf
