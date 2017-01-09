@@ -156,6 +156,7 @@ exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
     // Init of the returned object
     var newProps = {
+      conventions: [],
       depth: 0,
       leaves: 0,
       letters: 0,
@@ -170,18 +171,36 @@ exports.properties = function (expr, parentCmd) {
     // Process children
     for (var i = 0; i < propsArray.length; i += 1) {
       var props = propsArray[i];
+      newProps.conventions = newProps.conventions.concat(props.conventions);
       if (props.depth > newProps.depth) newProps.depth = props.depth;
       newProps.leaves += props.leaves;
       newProps.letters += props.letters;
       newProps.numbers += props.numbers;
     }
     newProps.depth += 1;
+    // Conventions
+    // * parenthèses
+    if (parens(cmd, parentCmd)) {
+        newProps.conventions.push('parenthèses');
+    }
+    // * signe ×
+    if (cmd === 'Produit') {
+        var lastArg = args[0];
+        for (var i = 1; i < args.length; i++) {
+            var arg = args[i];
+            if (skipMultSign(lastArg, arg)) {
+                newProps.conventions.push('signe ×');
+            }
+            lastArg = arg;
+        }
+    }
     // Return
     return newProps;
   } else {
     // A leaf
     var aLetter = isNaN(parseInt(expr));
     return {
+      conventions: [],
       depth: 0,
       leaves: 1,
       letters:  aLetter? 1 : 0,

@@ -13,6 +13,11 @@ function processExpr(exprObj, idx) {
     }
     var props = clubexpr.properties(randExpr);
     document.write("<h3>Inspection</h3>");
+    if (props.conventions.length) {
+        document.write("computed conventions : ");
+        document.write(props.conventions.join(', '));
+        document.write("<br>");
+    }
     document.write("depth: " + props.depth + "<br>");
     document.write("leaves: " + props.leaves + "<br>");
     document.write("letters: " + props.letters + "<br>");
