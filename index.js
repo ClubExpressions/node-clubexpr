@@ -194,6 +194,11 @@ exports.properties = function (expr, parentCmd) {
             lastArg = arg;
         }
     }
+    // * mult-div
+    if (belongsTo(cmd, ['Produit','Quotient','Puissance']) &&
+        belongsTo(parentCmd, ['Somme', 'Diff', 'Opposé'])) {
+        newProps.conventions.push('mult-div');
+    }
     // Return
     return newProps;
   } else {
