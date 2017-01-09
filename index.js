@@ -375,7 +375,7 @@ exports.expressions = function () {
    "conv": [MD],
    "expr": [S,1,[Q,a,2]]},
   {"nom" : "Différence entre un opposé et un nombre",
-   "conv": [O],
+   "conv": [Op],
    "expr": [D,[O,a],1]},
   {"nom" : "Opposé d’une différence",
    "conv": [Pa],
