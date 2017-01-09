@@ -72,7 +72,7 @@ describe('#renderExprAsLaTeX', function() {
             '\\frac{1}{a}',
             '1^2',
             'a^2',
-            'a^4',
+            'a^1',
             '\\frac{1}{a}',
             '-a',
             '1\\left(a+2\\right)',
