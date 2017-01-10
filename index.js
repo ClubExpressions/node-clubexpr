@@ -199,6 +199,16 @@ exports.properties = function (expr, parentCmd) {
         belongsTo(parentCmd, ['Somme', 'Diff', 'Opposé'])) {
         newProps.conventions.push('mult-div');
     }
+    // * opposé
+    if (cmd === 'Opposé' &&
+        belongsTo(parentCmd, ['Somme', 'Diff'])) {
+        newProps.conventions.push('opposé');
+    }
+    // * gauche-droite
+    if (belongsTo(cmd, ['Somme','Diff']) &&
+        belongsTo(parentCmd, ['Somme'])) {
+        newProps.conventions.push('gauche-droite');
+    }
     // Return
     return newProps;
   } else {
