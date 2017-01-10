@@ -358,7 +358,7 @@ exports.expressions = function () {
   {"nom" : "Division par un nombre",
    "conv": [],
    "expr": [Q,a,1]},
-  {"nom" : "Coeff divisé par un nombre",
+  {"nom" : "Nombre divisé par un nombre",
    "conv": [],
    "expr": [Q,1,a]},
   {"nom" : "Carré d’un nombre",
