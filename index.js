@@ -161,11 +161,13 @@ exports.properties = function (expr, parentCmd) {
       leaves: 0,
       letters: 0,
       numbers: 0,
+      ops: [],
       nature: ''
     };
     // Recursion
     var cmd = expr[0];
     newProps.nature = cmd;
+    newProps.ops.push(cmd);
     var args = expr.slice(1);
     var propsArray = args.map(function (expr) {
       return exports.properties(expr, cmd);
@@ -178,6 +180,7 @@ exports.properties = function (expr, parentCmd) {
       newProps.leaves += props.leaves;
       newProps.letters += props.letters;
       newProps.numbers += props.numbers;
+      newProps.ops = newProps.ops.concat(props.ops);
     }
     newProps.depth += 1;
     // Conventions
@@ -226,7 +229,8 @@ exports.properties = function (expr, parentCmd) {
       leaves: 1,
       letters:  aLetter? 1 : 0,
       numbers: !aLetter? 1 : 0,
-      nature: ''
+      nature: '',
+      ops: []
     };
   }
 }
