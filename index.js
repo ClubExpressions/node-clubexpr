@@ -160,10 +160,12 @@ exports.properties = function (expr, parentCmd) {
       depth: 0,
       leaves: 0,
       letters: 0,
-      numbers: 0
+      numbers: 0,
+      nature: ''
     };
     // Recursion
     var cmd = expr[0];
+    newProps.nature = cmd;
     var args = expr.slice(1);
     var propsArray = args.map(function (expr) {
       return exports.properties(expr, cmd);
@@ -223,7 +225,8 @@ exports.properties = function (expr, parentCmd) {
       depth: 0,
       leaves: 1,
       letters:  aLetter? 1 : 0,
-      numbers: !aLetter? 1 : 0
+      numbers: !aLetter? 1 : 0,
+      nature: ''
     };
   }
 }
