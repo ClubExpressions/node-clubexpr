@@ -9,11 +9,16 @@ function processExpr(exprObj, idx) {
     document.write(clubexpr.renderExprAsLisp(randExpr));
     document.write("$$" + clubexpr.renderExprAsLaTeX(randExpr) + "$$");
     if (exprObj.conv.length) {
-        document.write("  conventions : ");
+        document.write("conventions : ");
         document.write(exprObj.conv.join(', '));
     }
     var props = clubexpr.properties(randExpr);
     document.write("<h3>Inspection</h3>");
+    if (props.conventions.length) {
+        document.write("computed conventions : ");
+        document.write(props.conventions.join(', '));
+        document.write("<br>");
+    }
     document.write("depth: " + props.depth + "<br>");
     document.write("leaves: " + props.leaves + "<br>");
     document.write("letters: " + props.letters + "<br>");
@@ -88,6 +93,10 @@ exports.renderExprAsLisp = function (expr) {
     }
 }
 
+var skipMultSign = function (lastArg, arg) {
+    return isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg);
+}
+
 /**
  * @summary Renders an expression LaTex source.
  *
@@ -109,7 +118,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd) {
         latex = args[0];
         for (var i = 1; i < args.length; i++) {
             var arg = args[i];
-            if (!isNaN(parseInt(lastArg)) && isNaN(parseInt(arg)))
+            if (skipMultSign(lastArg, arg))
                 latex = latex + arg;
             else
                 latex = latex + '×' + arg;
@@ -176,28 +185,68 @@ var parens = function (cmd, parentCmd) {
  */
 exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
+    // Init of the returned object
     var newProps = {
+      conventions: [],
       depth: 0,
       leaves: 0,
       letters: 0,
       numbers: 0
     };
+    // Recursion
     var cmd = expr[0];
-    var propsArray = expr.slice(1).map(function (expr) {
+    var args = expr.slice(1);
+    var propsArray = args.map(function (expr) {
       return exports.properties(expr, cmd);
     });
+    // Process children
     for (var i = 0; i < propsArray.length; i += 1) {
       var props = propsArray[i];
+      newProps.conventions = newProps.conventions.concat(props.conventions);
       if (props.depth > newProps.depth) newProps.depth = props.depth;
       newProps.leaves += props.leaves;
       newProps.letters += props.letters;
       newProps.numbers += props.numbers;
     }
     newProps.depth += 1;
+    // Conventions
+    // * parenthèses
+    if (parens(cmd, parentCmd)) {
+        newProps.conventions.push('parenthèses');
+    }
+    // * signe ×
+    if (cmd === 'Produit') {
+        var lastArg = args[0];
+        for (var i = 1; i < args.length; i++) {
+            var arg = args[i];
+            if (skipMultSign(lastArg, arg)) {
+                newProps.conventions.push('signe ×');
+            }
+            lastArg = arg;
+        }
+    }
+    // * mult-div
+    if (belongsTo(cmd, ['Produit','Quotient','Puissance']) &&
+        belongsTo(parentCmd, ['Somme', 'Diff', 'Opposé'])) {
+        newProps.conventions.push('mult-div');
+    }
+    // * opposé
+    if (cmd === 'Opposé' &&
+        belongsTo(parentCmd, ['Somme', 'Diff'])) {
+        newProps.conventions.push('opposé');
+    }
+    // * gauche-droite
+    if (belongsTo(cmd, ['Somme','Diff']) &&
+        belongsTo(parentCmd, ['Somme'])) {
+        newProps.conventions.push('gauche-droite');
+    }
+    // Return
     return newProps;
   } else {
+    // A leaf
     var aLetter = isNaN(parseInt(expr));
     return {
+      conventions: [],
       depth: 0,
       leaves: 1,
       letters:  aLetter? 1 : 0,
@@ -303,16 +352,16 @@ exports.expressions = function () {
   {"nom" : "Somme de deux lettres",
    "conv": [],
    "expr": [S,a,b]},
-  {"nom" : "Diff de deux nombres",
+  {"nom" : "Différence de deux nombres",
    "conv": [],
    "expr": [D,1,2]},
-  {"nom" : "Diff d’une lettre et d’un nombre",
+  {"nom" : "Différence d’une lettre et d’un nombre",
    "conv": [],
    "expr": [D,a,1]},
-  {"nom" : "Diff d’un nombre et d’une lettre",
+  {"nom" : "Différence d’un nombre et d’une lettre",
    "conv": [],
    "expr": [D,1,a]},
-  {"nom" : "Diff de deux lettres",
+  {"nom" : "Différence de deux lettres",
    "conv": [],
    "expr": [D,a,b]},
   {"nom" : "Produit de deux nombres",
@@ -327,6 +376,9 @@ exports.expressions = function () {
   {"nom" : "Produit de deux lettres",
    "conv": [],
    "expr": [P,a,b]},
+  {"nom" : "Produit de deux lettres identiques",
+   "conv": [],
+   "expr": [P,a,a]},
   {"nom" : "Division par un nombre",
    "conv": [],
    "expr": [Q,a,1]},
@@ -339,9 +391,9 @@ exports.expressions = function () {
   {"nom" : "Carré d’une lettre",
    "conv": [],
    "expr": [C,a]},
-  {"nom" : "Puissance 4",
+  {"nom" : "Puissance",
    "conv": [],
-   "expr": [Pu,a,4]},
+   "expr": [Pu,a,1]},
   {"nom" : "Inverse",
    "conv": [],
    "expr": [I,a]},
@@ -349,10 +401,10 @@ exports.expressions = function () {
    "conv": [],
    "expr": [O,a]},
   {"nom" : "Produit d’un nombre avec une somme",
-   "conv": [P],
+   "conv": [Pa],
    "expr": [P,1,[S,a,2]]},
   {"nom" : "Produit d’un nombre avec une différence",
-   "conv": [P],
+   "conv": [Pa],
    "expr": [P,1,[D,a,2]]},
   {"nom" : "Somme d’un nombre avec un produit",
    "conv": [MD,X],
@@ -364,13 +416,13 @@ exports.expressions = function () {
    "conv": [MD],
    "expr": [S,1,[Q,a,2]]},
   {"nom" : "Différence entre un opposé et un nombre",
-   "conv": [O],
+   "conv": [Op],
    "expr": [D,[O,a],1]},
   {"nom" : "Opposé d’une différence",
-   "conv": [P],
+   "conv": [Pa],
    "expr": [O,[D,a,1]]},
   {"nom" : "Différence entre un nombre et une somme",
-   "conv": [P],
+   "conv": [Pa],
    "expr": [D,1,[S,2,a]]},
   {"nom" : "Somme d’une différence avec un nombre",
    "conv": [GD],
