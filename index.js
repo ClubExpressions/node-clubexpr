@@ -209,6 +209,10 @@ exports.properties = function (expr, parentCmd) {
         belongsTo(parentCmd, ['Somme'])) {
         newProps.conventions.push('gauche-droite');
     }
+    // * fraction
+    if (belongsTo(parentCmd, ['Quotient', 'Inverse'])) {
+        newProps.conventions.push('fraction');
+    }
     // Return
     return newProps;
   } else {
