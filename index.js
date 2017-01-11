@@ -214,7 +214,7 @@ exports.properties = function (expr, parentCmd) {
         }
     }
     // * mult-div
-    if (belongsTo(cmd, ['Produit','Quotient','Puissance']) &&
+    if (belongsTo(cmd, ['Produit','Quotient','Inverse','Puissance']) &&
         belongsTo(parentCmd, ['Somme', 'Diff', 'Opposé'])) {
         newProps.conventions.push('mult-div');
     }
