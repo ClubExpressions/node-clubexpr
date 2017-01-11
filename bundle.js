@@ -14,6 +14,10 @@ function processExpr(exprObj, idx) {
     }
     var props = clubexpr.properties(randExpr);
     document.write("<h3>Inspection</h3>");
+    document.write("nature: " + props.nature + "<br>");
+    document.write(props.nbOps + " operation" + (props.nbOps>1?"(s)":"") + ": " +
+                   props.ops.join(', ') + "<br>");
+    document.write("unique ops: " + props.uniqueOps.join(', ') + "<br>");
     if (props.conventions.length) {
         document.write("computed conventions : ");
         document.write(props.conventions.join(', '));
@@ -139,6 +143,10 @@ exports.renderExprAsLaTeX = function (expr, parentCmd) {
   }
 }
 
+Array.prototype.pushIfAbsent = function(val) {
+    if (this.indexOf(val) == -1) this.push(val);
+};
+
 /**
  * @summary Tests if a value is in an array.
  *
@@ -176,6 +184,18 @@ var parens = function (cmd, parentCmd) {
     return false;
 }
 
+var Properties = function() {
+  this.conventions = [];
+  this.depth = 0;
+  this.leaves = 0;
+  this.letters = 0;
+  this.numbers = 0;
+  this.ops = [];
+  this.nbOps = 0;
+  this.uniqueOps = [];
+  this.nature = '';
+}
+
 /**
  * @summary Inspects an expression.
  *
@@ -186,15 +206,13 @@ var parens = function (cmd, parentCmd) {
 exports.properties = function (expr, parentCmd) {
   if (typeof expr === 'object') {
     // Init of the returned object
-    var newProps = {
-      conventions: [],
-      depth: 0,
-      leaves: 0,
-      letters: 0,
-      numbers: 0
-    };
+    var newProps = new Properties();
     // Recursion
     var cmd = expr[0];
+    newProps.nature = cmd;
+    newProps.ops.push(cmd);
+    newProps.nbOps = newProps.nbOps + 1;
+    newProps.uniqueOps.pushIfAbsent(cmd);
     var args = expr.slice(1);
     var propsArray = args.map(function (expr) {
       return exports.properties(expr, cmd);
@@ -207,6 +225,11 @@ exports.properties = function (expr, parentCmd) {
       newProps.leaves += props.leaves;
       newProps.letters += props.letters;
       newProps.numbers += props.numbers;
+      newProps.ops = newProps.ops.concat(props.ops);
+      newProps.nbOps += newProps.nbOps;
+      for (var j = 0; j < props.uniqueOps.length; j += 1) {
+        newProps.uniqueOps.pushIfAbsent(props.uniqueOps[j]);
+      }
     }
     newProps.depth += 1;
     // Conventions
@@ -249,13 +272,11 @@ exports.properties = function (expr, parentCmd) {
   } else {
     // A leaf
     var aLetter = isNaN(parseInt(expr));
-    return {
-      conventions: [],
-      depth: 0,
-      leaves: 1,
-      letters:  aLetter? 1 : 0,
-      numbers: !aLetter? 1 : 0
-    };
+    var newProps = new Properties();
+    newProps.leaves  =  1;
+    newProps.letters =  aLetter? 1 : 0;
+    newProps.numbers = !aLetter? 1 : 0
+    return newProps;
   }
 }
 
@@ -383,12 +404,18 @@ exports.expressions = function () {
   {"nom" : "Produit de deux lettres identiques",
    "conv": [],
    "expr": [P,a,a]},
-  {"nom" : "Division par un nombre",
+  {"nom" : "Quotient de nombres",
    "conv": [],
    "expr": [Q,a,1]},
-  {"nom" : "Coeff divisé par un nombre",
+  {"nom" : "Lettre divisée par un nombre",
+   "conv": [],
+   "expr": [Q,a,1]},
+  {"nom" : "Nombre divisé par une lettre",
    "conv": [],
    "expr": [Q,1,a]},
+  {"nom" : "Quotient de lettres",
+   "conv": [],
+   "expr": [Q,a,b]},
   {"nom" : "Carré d’un nombre",
    "conv": [],
    "expr": [C,1]},
@@ -413,6 +440,9 @@ exports.expressions = function () {
   {"nom" : "Somme d’un nombre avec un produit",
    "conv": [MD,X],
    "expr": [S,1,[P,2,a]]},
+  {"nom" : "Différence entre un nombre et un opposé",
+   "conv": [Pa],
+   "expr": [D,1,[O,2]]},
   {"nom" : "Différence entre multiple et nombre",
    "conv": [MD,X],
    "expr": [D,[P,1,a],2]},
