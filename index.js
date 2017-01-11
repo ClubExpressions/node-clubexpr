@@ -108,6 +108,10 @@ exports.renderExprAsLaTeX = function (expr, parentCmd) {
   }
 }
 
+Array.prototype.pushIfAbsent = function(val) {
+    if (this.indexOf(val) == -1) this.push(val);
+};
+
 /**
  * @summary Tests if a value is in an array.
  *
@@ -152,6 +156,8 @@ var Properties = function() {
   this.letters = 0;
   this.numbers = 0;
   this.ops = [];
+  this.nbOps = 0;
+  this.uniqueOps = [];
   this.nature = '';
 }
 
@@ -170,6 +176,8 @@ exports.properties = function (expr, parentCmd) {
     var cmd = expr[0];
     newProps.nature = cmd;
     newProps.ops.push(cmd);
+    newProps.nbOps = newProps.nbOps + 1;
+    newProps.uniqueOps.pushIfAbsent(cmd);
     var args = expr.slice(1);
     var propsArray = args.map(function (expr) {
       return exports.properties(expr, cmd);
@@ -183,6 +191,10 @@ exports.properties = function (expr, parentCmd) {
       newProps.letters += props.letters;
       newProps.numbers += props.numbers;
       newProps.ops = newProps.ops.concat(props.ops);
+      newProps.nbOps += props.nbOps;
+      for (var j = 0; j < props.uniqueOps.length; j += 1) {
+        newProps.uniqueOps.pushIfAbsent(props.uniqueOps[j]);
+      }
     }
     newProps.depth += 1;
     // Conventions

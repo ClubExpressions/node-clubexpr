@@ -14,7 +14,9 @@ function processExpr(exprObj, idx) {
     var props = clubexpr.properties(randExpr);
     document.write("<h3>Inspection</h3>");
     document.write("nature: " + props.nature + "<br>");
-    document.write("operations: " + props.ops.join(', ') + "<br>");
+    document.write(props.nbOps + " operation" + (props.nbOps>1?"(s)":"") + ": " +
+                   props.ops.join(', ') + "<br>");
+    document.write("unique ops: " + props.uniqueOps.join(', ') + "<br>");
     if (props.conventions.length) {
         document.write("computed conventions : ");
         document.write(props.conventions.join(', '));
