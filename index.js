@@ -71,13 +71,14 @@ var skipMultSign = function (lastArg, arg) {
  *
  * @param expr An expression
  * @param parentCmd An optional type of expr, aka command
+ * @param pos An optional number, the position in the parent expr (from 0)
  * @return LaTex source
  */
-exports.renderExprAsLaTeX = function (expr, parentCmd) {
+exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     var cmd = expr[0];
-    var args = expr.slice(1).map(function (expr) {
-        return exports.renderExprAsLaTeX(expr, cmd);
+    var args = expr.slice(1).map(function (expr, idx) {
+        return exports.renderExprAsLaTeX(expr, cmd, idx);
     });
     var latex = '';
     if (cmd === 'Somme'    ) latex = args.join('+');
@@ -101,7 +102,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd) {
     if (cmd === 'Puissance') latex = args[0] + "^" + args[1];
     if (cmd === 'Racine'   ) latex = "\\sqrt{" + args[0] + "}";
     if (latex === '') return "Unknown cmd: " + cmd;
-    if (parens(cmd, parentCmd)) latex = '\\left(' + latex + '\\right)';
+    if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
   } else {
       return expr;
@@ -130,7 +131,7 @@ var belongsTo = function (obj, arr) {
  * @param parentCmd The parent command
  * @return a boolean
  */
-var parens = function (cmd, parentCmd) {
+var parens = function (cmd, parentCmd, pos) {
     var S  = 'Somme';
     var D  = 'Diff';
     var P  = 'Produit';
@@ -140,11 +141,14 @@ var parens = function (cmd, parentCmd) {
     var C  = 'Carré';
     var Pu = 'Puissance';
     var R  = 'Racine';
-    if (belongsTo(cmd, [S,D])) {
-        return belongsTo(parentCmd, [D,P,O,C,Pu,R]);
+    if (belongsTo(parentCmd, [C,Pu])) {
+        return belongsTo(cmd, [S,D,O,P,Q,I]);
     }
-    if (belongsTo(cmd, [P,Q,O,I])) {
-        return belongsTo(parentCmd, [C,Pu]);
+    if (parentCmd == P) {
+        return belongsTo(cmd, [S,D,O]);
+    }
+    if ((parentCmd == O) || (parentCmd == D && pos == 1)) {
+        return belongsTo(cmd, [S,D,O]);
     }
     return false;
 }
@@ -166,9 +170,10 @@ var Properties = function() {
  *
  * @param expr The expression to inspect
  * @param parentCmd An optional type of expr, aka command
+ * @param pos An optional number, the position in the parent expr (from 0)
  * @return An object with all the information
  */
-exports.properties = function (expr, parentCmd) {
+exports.properties = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     // Init of the returned object
     var newProps = new Properties();
@@ -179,8 +184,8 @@ exports.properties = function (expr, parentCmd) {
     newProps.nbOps = newProps.nbOps + 1;
     newProps.uniqueOps.pushIfAbsent(cmd);
     var args = expr.slice(1);
-    var propsArray = args.map(function (expr) {
-      return exports.properties(expr, cmd);
+    var propsArray = args.map(function (expr, idx) {
+      return exports.properties(expr, cmd, idx);
     });
     // Process children
     for (var i = 0; i < propsArray.length; i += 1) {
@@ -199,7 +204,7 @@ exports.properties = function (expr, parentCmd) {
     newProps.depth += 1;
     // Conventions
     // * parenthèses
-    if (parens(cmd, parentCmd)) {
+    if (parens(cmd, parentCmd, pos)) {
         newProps.conventions.push('parenthèses');
     }
     // * signe ×
