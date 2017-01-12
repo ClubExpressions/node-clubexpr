@@ -106,13 +106,14 @@ var skipMultSign = function (lastArg, arg) {
  *
  * @param expr An expression
  * @param parentCmd An optional type of expr, aka command
+ * @param pos An optional number, the position in the parent expr (from 0)
  * @return LaTex source
  */
-exports.renderExprAsLaTeX = function (expr, parentCmd) {
+exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     var cmd = expr[0];
-    var args = expr.slice(1).map(function (expr) {
-        return exports.renderExprAsLaTeX(expr, cmd);
+    var args = expr.slice(1).map(function (expr, idx) {
+        return exports.renderExprAsLaTeX(expr, cmd, idx);
     });
     var latex = '';
     if (cmd === 'Somme'    ) latex = args.join('+');
@@ -136,7 +137,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd) {
     if (cmd === 'Puissance') latex = args[0] + "^" + args[1];
     if (cmd === 'Racine'   ) latex = "\\sqrt{" + args[0] + "}";
     if (latex === '') return "Unknown cmd: " + cmd;
-    if (parens(cmd, parentCmd)) latex = '\\left(' + latex + '\\right)';
+    if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
   } else {
       return expr;
@@ -165,7 +166,7 @@ var belongsTo = function (obj, arr) {
  * @param parentCmd The parent command
  * @return a boolean
  */
-var parens = function (cmd, parentCmd) {
+var parens = function (cmd, parentCmd, pos) {
     var S  = 'Somme';
     var D  = 'Diff';
     var P  = 'Produit';
@@ -175,11 +176,14 @@ var parens = function (cmd, parentCmd) {
     var C  = 'Carré';
     var Pu = 'Puissance';
     var R  = 'Racine';
-    if (belongsTo(cmd, [S,D])) {
-        return belongsTo(parentCmd, [D,P,O,C,Pu,R]);
+    if (belongsTo(parentCmd, [C,Pu])) {
+        return belongsTo(cmd, [S,D,O,P,Q,I]);
     }
-    if (belongsTo(cmd, [P,Q,O,I])) {
-        return belongsTo(parentCmd, [C,Pu]);
+    if (parentCmd == P) {
+        return belongsTo(cmd, [S,D,O]);
+    }
+    if ((parentCmd == O) || (parentCmd == D && pos == 1)) {
+        return belongsTo(cmd, [S,D,O]);
     }
     return false;
 }
@@ -201,9 +205,10 @@ var Properties = function() {
  *
  * @param expr The expression to inspect
  * @param parentCmd An optional type of expr, aka command
+ * @param pos An optional number, the position in the parent expr (from 0)
  * @return An object with all the information
  */
-exports.properties = function (expr, parentCmd) {
+exports.properties = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     // Init of the returned object
     var newProps = new Properties();
@@ -214,8 +219,8 @@ exports.properties = function (expr, parentCmd) {
     newProps.nbOps = newProps.nbOps + 1;
     newProps.uniqueOps.pushIfAbsent(cmd);
     var args = expr.slice(1);
-    var propsArray = args.map(function (expr) {
-      return exports.properties(expr, cmd);
+    var propsArray = args.map(function (expr, idx) {
+      return exports.properties(expr, cmd, idx);
     });
     // Process children
     for (var i = 0; i < propsArray.length; i += 1) {
@@ -226,7 +231,7 @@ exports.properties = function (expr, parentCmd) {
       newProps.letters += props.letters;
       newProps.numbers += props.numbers;
       newProps.ops = newProps.ops.concat(props.ops);
-      newProps.nbOps += newProps.nbOps;
+      newProps.nbOps += props.nbOps;
       for (var j = 0; j < props.uniqueOps.length; j += 1) {
         newProps.uniqueOps.pushIfAbsent(props.uniqueOps[j]);
       }
@@ -234,7 +239,7 @@ exports.properties = function (expr, parentCmd) {
     newProps.depth += 1;
     // Conventions
     // * parenthèses
-    if (parens(cmd, parentCmd)) {
+    if (parens(cmd, parentCmd, pos)) {
         newProps.conventions.push('parenthèses');
     }
     // * signe ×
@@ -249,7 +254,7 @@ exports.properties = function (expr, parentCmd) {
         }
     }
     // * mult-div
-    if (belongsTo(cmd, ['Produit','Quotient','Puissance']) &&
+    if (belongsTo(cmd, ['Produit','Quotient','Inverse','Puissance']) &&
         belongsTo(parentCmd, ['Somme', 'Diff', 'Opposé'])) {
         newProps.conventions.push('mult-div');
     }
@@ -266,6 +271,12 @@ exports.properties = function (expr, parentCmd) {
     // * fraction
     if (belongsTo(parentCmd, ['Quotient', 'Inverse'])) {
         newProps.conventions.push('fraction');
+    }
+    // * élévation
+    if (belongsTo(cmd, ['Puissance']) &&
+        belongsTo(parentCmd, ['Somme', 'Diff', 'Opposé',
+                              'Produit', 'Quotient', 'Inverse'])) {
+        newProps.conventions.push('élévation');
     }
     // Return
     return newProps;
@@ -406,7 +417,7 @@ exports.expressions = function () {
    "expr": [P,a,a]},
   {"nom" : "Quotient de nombres",
    "conv": [],
-   "expr": [Q,a,1]},
+   "expr": [Q,1,2]},
   {"nom" : "Lettre divisée par un nombre",
    "conv": [],
    "expr": [Q,a,1]},
@@ -473,6 +484,39 @@ exports.expressions = function () {
   {"nom" : "Opposé d’un multiple",
    "conv": [MD,X],
    "expr": [O,[P,1,a]]},
+  {"nom" : "Opposé de l’inverse",
+   "conv": [MD],
+   "expr": [O,[I,a]]},
+  {"nom" : "Opposé d’un quotient de deux lettres",
+   "conv": [MD],
+   "expr": [O,[Q,a,b]]},
+  {"nom" : "Opposé d’un carré",
+   "conv": [El],
+   "expr": [O,[C,a]]},
+  {"nom" : "Carré d’un opposé",
+   "conv": [],
+   "expr": [C,[O,a]]},
+  {"nom" : "Carré d’une somme",
+   "conv": [Pa],
+   "expr": [C,[S,1,a]]},
+  {"nom" : "Somme d’un nombre avec un carré",
+   "conv": [El],
+   "expr": [S,1,[C,a]]},
+  {"nom" : "Multiple d’un carré",
+   "conv": [El,X],
+   "expr": [P,1,[C,a]]},
+  {"nom" : "Carré d’un multiple",
+   "conv": [Pa,X],
+   "expr": [C,[P,1,a]]},
+  {"nom" : "Carré divisé par un nombre",
+   "conv": [El],
+   "expr": [Q,[C,a],1]},
+  {"nom" : "Carré d’une lettre divisée par un nombre",
+   "conv": [Pa],
+   "expr": [C,[Q,a,1]]},
+  {"nom" : "Produit d’une lettre par un multiple d’une lettre",
+   "conv": [X],
+   "expr": [P,a,[P,1,a]]},
   {"nom" : "Homographique séparée",
    "conv": [F,MD],
    "expr": [S,1,[Q,2,[S,[P,3,a],4]]]},
