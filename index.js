@@ -224,7 +224,7 @@ exports.properties = function (expr, parentCmd, pos) {
         newProps.conventions.push('mult-div');
     }
     // * opposé
-    if (cmd === 'Opposé' &&
+    if (cmd === 'Opposé' && pos == 0 &&
         belongsTo(parentCmd, ['Somme', 'Diff'])) {
         newProps.conventions.push('opposé');
     }
