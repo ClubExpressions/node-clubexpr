@@ -121,6 +121,14 @@ describe('#renderExprAsLaTeX', function() {
             '1a^2+a',
             '\\frac{a+1}{a-2}',
             '1+\\frac{2}{a+3}',
+            '\\sqrt{\\left(1-2\\right)^2+\\left(3+4\\right)^2}',
+            '1\\left(2+3\\right)\\left(4+5\\right)',
+            'a^2+1a+2',
+            '1\\left(a+2\\right)^2-3',
+            '1\\left(2+3\\right)\\left(4-5\\right)',
+            '\\left(a+1\\right)^2-a^2',
+            '1a^2+2a+3',
+            '\\frac{1a+2}{3a+4}',
             '1+\\frac{2}{3a+4}'];
         expressions.forEach(function (exprObj, idx) {
             var expr = exprObj.expr;
