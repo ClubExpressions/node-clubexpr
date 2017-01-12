@@ -238,7 +238,7 @@ exports.properties = function (expr, parentCmd, pos) {
         newProps.conventions.push('fraction');
     }
     // * élévation
-    if (belongsTo(cmd, ['Puissance']) &&
+    if (belongsTo(cmd, ['Carré','Puissance']) &&
         belongsTo(parentCmd, ['Somme', 'Diff', 'Opposé',
                               'Produit', 'Quotient', 'Inverse'])) {
         newProps.conventions.push('élévation');
