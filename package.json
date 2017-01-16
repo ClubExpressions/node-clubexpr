@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build-demo": "browserify demo.js > bundle.js",
+    "build-react-demo": "browserify -t [ babelify --presets [ react ] ] react/index.js -o bundle.js",
     "test": "mocha --reporter spec"
   },
   "repository": {
@@ -21,5 +22,11 @@
     "chai": "^3.5.0",
     "chai-shallow-deep-equal": "^1.4.4",
     "mocha": "^3.2.0"
+  },
+  "dependencies": {
+    "babel-preset-react": "^6.16.0",
+    "babelify": "^7.3.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
   }
 }
