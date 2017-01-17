@@ -32,7 +32,7 @@ module.exports = React.createClass({
   },
   render: function() {
     var options = [
-        { value: 'All', label: 'Nature indifférente' },
+        { value: 'All', label: 'Toutes les natures' },
         { value: 'Somme', label: 'Sommes' },
         { value: 'Diff', label: 'Différences' },
         { value: 'Opposé', label: 'Opposés' },
