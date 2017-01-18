@@ -45,7 +45,6 @@ module.exports = React.createClass({
     });
   },
   _onDepth: function(depthRange) {
-      console.log(depthRange);
     var min = depthRange[0];
     var max = depthRange[1];
     var filters = this.state.filters;
