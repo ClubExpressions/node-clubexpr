@@ -13,34 +13,49 @@ module.exports = React.createClass({
         exprObj.properties = ClubExpr.properties(exprObj.expr);
         return exprObj;
       }),
-      expressionsShown: ClubExpr.expressions,
+      filters: {},
       nature: 'All',
       depthRange: [1, 7]
     };
   },
+  _filter: function(expr) {
+    var bool = true;
+    var filters = this.state.filters;
+    Object.keys(filters).forEach(function (key) {
+      if (!filters[key](expr)) {
+        bool = false;
+        return false;  // Stop the loop!
+      }
+    });
+    return bool;
+  },
   _onNature: function(natureObj) {
     var nature = natureObj.value;
-    var exprs;
+    var filters = this.state.filters;
     if (nature == 'All') {
-      exprs = this.state.expressions;
+      delete filters.nature;
     } else {
-      exprs = this.state.expressions.filter(function (exprObj) {
-              return exprObj.properties.nature == nature; });
+      filters.nature = function (exprObj) {
+        return exprObj.properties.nature == nature;
+      };
     }
     this.setState({
       nature: nature,
-      expressionsShown: exprs
+      filters: filters
     });
   },
   _onDepth: function(depthRange) {
       console.log(depthRange);
     var min = depthRange[0];
     var max = depthRange[1];
+    var filters = this.state.filters;
+    filters.depth = function (exprObj) {
+          var exprDepth = exprObj.properties.depth;
+          return min <= exprDepth && exprDepth <= max;
+    };
     this.setState({
       depthRange: depthRange,
-      expressionsShown: this.state.expressions.filter(function (exprObj) {
-          var exprDepth = exprObj.properties.depth;
-          return min <= exprDepth && exprDepth <= max; })
+      filters: filters
     });
   },
   render: function() {
@@ -71,7 +86,7 @@ module.exports = React.createClass({
         marks={{'1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7'}}
     />
     <ul>
-      {this.state.expressionsShown.map(function(exprObj, idx){
+      {this.state.expressions.filter(this._filter).map(function(exprObj, idx){
         return <li key={idx}>
                  {(idx<9?"  ":"") + (idx+1)} : <Expression expr={exprObj.expr} />
                </li>;
