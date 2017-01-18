@@ -15,7 +15,8 @@ module.exports = React.createClass({
       }),
       filters: {},
       nature: 'All',
-      depthRange: [1, 7]
+      depthRange: [1, 7],
+      nbOpsRange: [1, 7]
     };
   },
   _filter: function(expr) {
@@ -57,6 +58,19 @@ module.exports = React.createClass({
       filters: filters
     });
   },
+  _onNbOps: function(nbOpsRange) {
+    var min = nbOpsRange[0];
+    var max = nbOpsRange[1];
+    var filters = this.state.filters;
+    filters.nbOps = function (exprObj) {
+          var exprNbOps = exprObj.properties.nbOps;
+          return min <= exprNbOps && exprNbOps <= max;
+    };
+    this.setState({
+      nbOpsRange: nbOpsRange,
+      filters: filters
+    });
+  },
   render: function() {
     var options = [
         { value: 'All', label: 'Toutes les natures' },
@@ -82,6 +96,13 @@ module.exports = React.createClass({
         min={1} max={7} range={true}
         value={this.state.depthRange}
         onChange={this._onDepth}
+        marks={{'1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7'}}
+    />
+    Nbre d’opérations
+    <Slider
+        min={1} max={7} range={true}
+        value={this.state.nbOpsRange}
+        onChange={this._onNbOps}
         marks={{'1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7'}}
     />
     <ul>
