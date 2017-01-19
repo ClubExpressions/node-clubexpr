@@ -10,6 +10,13 @@
  */
 
 /**
+ * Centralization of the list of operations
+ *
+ */
+
+exports.operations = ['Somme', 'Diff', 'Produit', 'Quotient', 'Opposé', 'Inverse', 'Carré', 'Puissance', 'Racine'];
+
+/**
  * @summary Parses Lisp source which represents an expression.
  *
  * Adapted from <https://www.recurse.com/blog/21-little-lisp-interpreter>
@@ -18,7 +25,6 @@
  * @param src The Lisp source
  * @return A nested JS array
  */
-
 exports.parse = function (input) {
   return parenthesize(tokenize(input));
 };
@@ -30218,10 +30224,32 @@ module.exports = React.createClass({
   },
   render: function () {
     var options = [{ value: 'All', label: 'Toutes les natures' }, { value: 'Somme', label: 'Sommes' }, { value: 'Diff', label: 'Différences' }, { value: 'Opposé', label: 'Opposés' }, { value: 'Produit', label: 'Produits' }, { value: 'Quotient', label: 'Quotients' }, { value: 'Inverse', label: 'Inverses' }, { value: 'Carré', label: 'Carrés' }, { value: 'Racine', label: 'Racines' }, { value: 'Puissance', label: 'Puissances' }];
+    var selectStyle = {
+      marginTop: '10px',
+      marginBottom: '30px',
+      width: '400px'
+    };
+    var sliderStyle = selectStyle;
+    var ulStyle = {
+      listStyleType: 'none',
+      width: '760px',
+      overflow: 'hidden'
+    };
+    var liStyle = {
+      float: 'left',
+      display: 'inline',
+      width: '33%'
+    };
     return React.createElement(
       'div',
       null,
+      React.createElement(
+        'h2',
+        null,
+        'Filtrage'
+      ),
       React.createElement(Select, {
+        style: selectStyle,
         options: options,
         value: this.state.nature,
         clearable: false,
@@ -30229,6 +30257,7 @@ module.exports = React.createClass({
       }),
       'Profondeur\xA0',
       React.createElement(Slider, {
+        style: sliderStyle,
         min: 1, max: 7, range: true,
         value: this.state.depthRange,
         onChange: this._onDepth,
@@ -30236,6 +30265,7 @@ module.exports = React.createClass({
       }),
       'Nbre d\u2019op\xE9rations',
       React.createElement(Slider, {
+        style: sliderStyle,
         min: 1, max: 7, range: true,
         value: this.state.nbOpsRange,
         onChange: this._onNbOps,
@@ -30245,9 +30275,10 @@ module.exports = React.createClass({
       React.createElement(
         CheckboxGroup,
         {
+          style: { marginTop: '10px' },
           value: this.state.ops,
           onChange: this._onPreventedOps },
-        ['Somme', 'Produit'].map(function (op, idx) {
+        ClubExpr.operations.map(function (op, idx) {
           return React.createElement(
             'label',
             { key: idx },
@@ -30258,12 +30289,17 @@ module.exports = React.createClass({
         })
       ),
       React.createElement(
-        'ul',
+        'h2',
         null,
+        'Expressions'
+      ),
+      React.createElement(
+        'ul',
+        { style: ulStyle },
         this.state.expressions.filter(this._filter).map(function (exprObj, idx) {
           return React.createElement(
             'li',
-            { key: idx },
+            { key: idx, style: liStyle },
             (idx < 9 ? "  " : "") + (idx + 1),
             '\xA0: ',
             React.createElement(Expression, { expr: exprObj.expr })
