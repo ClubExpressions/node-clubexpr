@@ -133,7 +133,7 @@ module.exports = React.createClass({
     <CheckboxGroup
         value={this.state.ops}
         onChange={this._onPreventedOps}>
-      {['Somme', 'Produit'].map(function(op, idx){
+      {ClubExpr.operations.map(function(op, idx){
         return <label key={idx}><Checkbox value={op}/> {op}</label>;
       })}
     </CheckboxGroup>
