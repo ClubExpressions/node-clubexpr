@@ -9,6 +9,21 @@
  */
 
 /**
+ * Centralization of the list of operations
+ *
+ */
+exports.operations = [
+  'Somme',
+  'Diff',
+  'Produit',
+  'Quotient',
+  'Opposé',
+  'Inverse',
+  'Carré',
+  'Puissance',
+  'Racine'];
+
+/**
  * @summary Parses Lisp source which represents an expression.
  *
  * Adapted from <https://www.recurse.com/blog/21-little-lisp-interpreter>
