@@ -54,8 +54,8 @@ module.exports = React.createClass({
     var max = depthRange[1];
     var filters = this.state.filters;
     filters.depth = function (exprObj) {
-          var exprDepth = exprObj.properties.depth;
-          return min <= exprDepth && exprDepth <= max;
+      var exprDepth = exprObj.properties.depth;
+      return min <= exprDepth && exprDepth <= max;
     };
     this.setState({
       depthRange: depthRange,
