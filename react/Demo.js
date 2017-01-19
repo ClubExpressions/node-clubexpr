@@ -2,6 +2,9 @@ var ReactDOM = require('react-dom');
 var React = require('react');
 var Select = require('react-select');
 var Slider = require('rc-slider');
+var CBG = require('react-checkbox-group');
+var Checkbox = CBG.Checkbox;
+var CheckboxGroup = CBG.CheckboxGroup;
 
 var Expression = require('./Expression');
 var ClubExpr = require('../index');
@@ -16,7 +19,8 @@ module.exports = React.createClass({
       filters: {},
       nature: 'All',
       depthRange: [1, 7],
-      nbOpsRange: [1, 7]
+      nbOpsRange: [1, 7],
+      preventedOps: []
     };
   },
   _filter: function(expr) {
@@ -63,11 +67,31 @@ module.exports = React.createClass({
     var max = nbOpsRange[1];
     var filters = this.state.filters;
     filters.nbOps = function (exprObj) {
-          var exprNbOps = exprObj.properties.nbOps;
-          return min <= exprNbOps && exprNbOps <= max;
+      var exprNbOps = exprObj.properties.nbOps;
+      return min <= exprNbOps && exprNbOps <= max;
     };
     this.setState({
       nbOpsRange: nbOpsRange,
+      filters: filters
+    });
+  },
+  _onPreventedOps: function(ops) {
+    var filters = this.state.filters;
+    filters.preventedOps = function (exprObj) {
+      var exprOps = exprObj.properties.ops;
+      var bool = true;
+      ops.map(function (op) {
+          console.log(op);
+          console.log(ops);
+        if (exprOps.indexOf(op) !== -1) {
+          bool = false;
+          return false;  // Stop the loop!
+        }
+      });
+      return bool;
+    };
+    this.setState({
+      preventedOps: ops,
       filters: filters
     });
   },
@@ -105,6 +129,14 @@ module.exports = React.createClass({
         onChange={this._onNbOps}
         marks={{'1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7'}}
     />
+    Opérations à ne pas faire apparaître
+    <CheckboxGroup
+        value={this.state.ops}
+        onChange={this._onPreventedOps}>
+      {['Somme', 'Produit'].map(function(op, idx){
+        return <label key={idx}><Checkbox value={op}/> {op}</label>;
+      })}
+    </CheckboxGroup>
     <ul>
       {this.state.expressions.filter(this._filter).map(function(exprObj, idx){
         return <li key={idx}>
