@@ -108,8 +108,26 @@ module.exports = React.createClass({
         { value: 'Racine', label: 'Racines' },
         { value: 'Puissance', label: 'Puissances' }
     ];
+    var selectStyle = {
+        marginTop: '10px',
+        marginBottom: '30px',
+        width: '400px'
+    };
+    var sliderStyle = selectStyle;
+    var ulStyle = {
+        listStyleType: 'none',
+        width: '760px',
+        overflow: 'hidden'
+    };
+    var liStyle = {
+        float: 'left',
+        display: 'inline',
+        width: '33%'
+    };
     return <div>
+    <h2>Filtrage</h2>
     <Select
+        style={selectStyle}
         options={options}
         value={this.state.nature}
         clearable={false}
@@ -117,6 +135,7 @@ module.exports = React.createClass({
     />
     Profondeur 
     <Slider
+        style={sliderStyle}
         min={1} max={7} range={true}
         value={this.state.depthRange}
         onChange={this._onDepth}
@@ -124,6 +143,7 @@ module.exports = React.createClass({
     />
     Nbre d’opérations
     <Slider
+        style={sliderStyle}
         min={1} max={7} range={true}
         value={this.state.nbOpsRange}
         onChange={this._onNbOps}
@@ -131,15 +151,17 @@ module.exports = React.createClass({
     />
     Opérations à ne pas faire apparaître
     <CheckboxGroup
+        style={{marginTop: '10px'}}
         value={this.state.ops}
         onChange={this._onPreventedOps}>
       {ClubExpr.operations.map(function(op, idx){
         return <label key={idx}><Checkbox value={op}/> {op}</label>;
       })}
     </CheckboxGroup>
-    <ul>
+    <h2>Expressions</h2>
+    <ul style={ulStyle}>
       {this.state.expressions.filter(this._filter).map(function(exprObj, idx){
-        return <li key={idx}>
+        return <li key={idx} style={liStyle}>
                  {(idx<9?"  ":"") + (idx+1)} : <Expression expr={exprObj.expr} />
                </li>;
       })}
