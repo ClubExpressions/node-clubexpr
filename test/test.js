@@ -141,6 +141,22 @@ describe('#renderExprAsLaTeX', function() {
     });
 });
 
+var renderLispAsLaTeX = clubExpr.renderLispAsLaTeX;
+
+describe('#renderLispAsLaTeX', function() {
+    it('should render a single expression with one arg', function() {
+        equal(renderLispAsLaTeX('(Racine b)'), '\\sqrt{b}');
+    });
+
+    it('should render a single expression with two args', function() {
+        equal(renderLispAsLaTeX('(Somme a b)'), 'a+b');
+    });
+
+    it('should render a nested expression', function() {
+        equal(renderLispAsLaTeX('(Somme a (Produit b c))'), 'a+bc');
+    });
+});
+
 var replace = clubExpr.replaceValuesWith;
 
 describe('#replace', function() {

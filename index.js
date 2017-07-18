@@ -124,6 +124,16 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
   }
 }
 
+/**
+ * @summary Renders Lisp source as LaTeX source.
+ *
+ * @param src Lisp source, aka Code Club
+ * @return LaTeX source
+ */
+exports.renderLispAsLaTeX = function (src) {
+    return exports.renderExprAsLaTeX(exports.parse(src));
+}
+
 Array.prototype.pushIfAbsent = function(val) {
     if (this.indexOf(val) == -1) this.push(val);
 };
