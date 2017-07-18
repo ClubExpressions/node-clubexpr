@@ -62,7 +62,7 @@ var parenthesize = function(input, list) {
 };
 
 /**
- * @summary Renders an expression Lisp source.
+ * @summary Renders an expression as Lisp source.
  *
  * @param expr An expression
  * @return Lisp source, aka Code Club
@@ -82,7 +82,7 @@ var skipMultSign = function (lastArg, arg) {
 }
 
 /**
- * @summary Renders an expression LaTex source.
+ * @summary Renders an expression as LaTex source.
  *
  * @param expr An expression
  * @param parentCmd An optional type of expr, aka command
