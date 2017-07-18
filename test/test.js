@@ -52,10 +52,7 @@ describe('#renderingParsingRoundTrip', function() {
 });
 
 var renderExprAsLaTeX = clubExpr.renderExprAsLaTeX;
-
-describe('#renderExprAsLaTeX', function() {
-    it('should render the official expressions correctly', function() {
-        var exprsRenderedAsLaTeX = [
+var exprsRenderedAsLaTeX = [
             '1+2',
             'a+1',
             '1+a',
@@ -134,6 +131,9 @@ describe('#renderExprAsLaTeX', function() {
             '1a^2+2a+3',
             '\\frac{1a+2}{3a+4}',
             '1+\\frac{2}{3a+4}'];
+
+describe('#renderExprAsLaTeX', function() {
+    it('should render the official expressions correctly', function() {
         expressions.forEach(function (exprObj, idx) {
             var expr = exprObj.expr;
             equal(renderExprAsLaTeX(expr), exprsRenderedAsLaTeX[idx]);
