@@ -165,9 +165,13 @@ describe('#replace', function() {
                         ['Somme', 'x', 2]);
     });
 
+    it('should replace "a" with "x" and conversely in a flat expr', function() {
+        sdEqual(replace(['Somme', 'a', 'x'], {'a':'x', 'x':'a'}),
+                        ['Somme', 'x', 'a']);
+    });
+
     it('should replace "a" with "x" and 1 with 2 in a nested expr', function() {
         sdEqual(replace(['Produit', ['Somme', 1, 'a'], 3], {'a':'x', 1:2}),
                         ['Produit', ['Somme', 2, 'x'], 3]);
     });
 });
-
