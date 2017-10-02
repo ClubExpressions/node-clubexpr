@@ -33,7 +33,7 @@ exports.operations = [
  * @return A nested JS array
  */
 exports.parse = function(input) {
-  return parenthesize(tokenize(input));
+  return buildTree(tokenize(input));
 };
 
 var tokenize = function(input) {
@@ -43,20 +43,20 @@ var tokenize = function(input) {
               .split(/\s+/);
 };
 
-var parenthesize = function(input, list) {
+var buildTree = function(input, list) {
   if (list === undefined) {
-    return parenthesize(input, []);
+    return buildTree(input, []);
   } else {
     var token = input.shift();
     if (token === undefined) {
       return list.pop();
     } else if (token === "(") {
-      list.push(parenthesize(input, []));
-      return parenthesize(input, list);
+      list.push(buildTree(input, []));
+      return buildTree(input, list);
     } else if (token === ")") {
       return list;
     } else {
-      return parenthesize(input, list.concat(token));
+      return buildTree(input, list.concat(token));
     }
   }
 };
