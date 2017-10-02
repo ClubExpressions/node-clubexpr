@@ -78,11 +78,9 @@ module.exports = React.createClass({
   _onPreventedOps: function(ops) {
     var filters = this.state.filters;
     filters.preventedOps = function (exprObj) {
-      var exprOps = exprObj.properties.ops;
+      var exprOps = exprObj.properties.uniqueOps;
       var bool = true;
       ops.map(function (op) {
-          console.log(op);
-          console.log(ops);
         if (exprOps.indexOf(op) !== -1) {
           bool = false;
           return false;  // Stop the loop!
