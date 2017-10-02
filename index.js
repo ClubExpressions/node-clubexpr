@@ -38,9 +38,9 @@ exports.parse = function(input) {
 
 var tokenize = function(input) {
   return input.replace(/\(/g, ' ( ')
-        .replace(/\)/g, ' ) ')
-        .trim()
-        .split(/\s+/);
+              .replace(/\)/g, ' ) ')
+              .trim()
+              .split(/\s+/);
 };
 
 var parenthesize = function(input, list) {
