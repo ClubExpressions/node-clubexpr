@@ -116,7 +116,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     if (cmd === 'Carré'    ) latex = args[0] + "^2";
     if (cmd === 'Puissance') latex = args[0] + "^" + args[1];
     if (cmd === 'Racine'   ) latex = "\\sqrt{" + args[0] + "}";
-    if (latex === '') return "Unknown cmd: " + cmd;
+    if (latex === '') throw new Error("Unknown cmd:" + cmd);
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
   } else {

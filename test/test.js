@@ -2,6 +2,7 @@
 
 var chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
+var assert = chai.assert;
 var equal = chai.assert.equal;
 var sdEqual = chai.assert.shallowDeepEqual;
 
@@ -154,6 +155,11 @@ describe('#renderLispAsLaTeX', function() {
 
     it('should render a nested expression', function() {
         equal(renderLispAsLaTeX('(Somme a (Produit b c))'), 'a+bc');
+    });
+
+    it('should fail if the command is unknown', function() {
+        assert.throw(function () {renderLispAsLaTeX('(Unk a b)');},
+                     Error, "Unknown cmd:Unk");
     });
 });
 
