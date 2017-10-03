@@ -51,14 +51,14 @@ var buildTree = function(input, list, lastToken) {
   } else {
     var token = input.shift();
     if (token === undefined) {
-      if (lastToken !== undefined && lastToken !== ")")
+      if (lastToken !== "(" && lastToken !== ")")
         throw new Error("Missing )");
       return list.pop();
     } else if (token === "(") {
-      list.push(buildTree(input, []));
-      return buildTree(input, list);
+      list.push(buildTree(input, [], token));
+      return buildTree(input, list, token);
     } else if (token === ")") {
-      return buildTree([], [list], ")");
+      return buildTree([], [list], token);
     } else {
       return buildTree(input, list.concat(token), token);
     }
