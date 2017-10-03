@@ -57,6 +57,8 @@ var buildTree = function(input, list, lastToken) {
     } else if (token === "(") {
       if (input[0] === "(")
         throw new Error("Double (");
+      if (input[0] === ")")
+        throw new Error("Missing cmd");
       list.push(buildTree(input, [], token));
       return buildTree(input, list, token);
     } else if (token === ")") {
@@ -87,6 +89,10 @@ var skipMultSign = function (lastArg, arg) {
     return isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg);
 }
 
+function twoOrMoreArgs(op, nbArgs) {
+  if (nbArgs < 2) throw new Error(op + ": nb args < 2");
+}
+
 /**
  * @summary Renders an expression as LaTex source.
  *
@@ -98,11 +104,15 @@ var skipMultSign = function (lastArg, arg) {
 exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     var cmd = expr[0];
+    var nbArgs = expr.length - 1;
     var args = expr.slice(1).map(function (expr, idx) {
         return exports.renderExprAsLaTeX(expr, cmd, idx);
     });
     var latex = '';
-    if (cmd === 'Somme'    ) latex = args.join('+');
+    if (cmd === 'Somme') {
+      twoOrMoreArgs('Somme', nbArgs);
+      latex = args.join('+');
+    }
     if (cmd === 'Diff'     ) latex = args[0] + "-" + args[1];
     if (cmd === 'Produit'  ) {
         var lastArg = args[0];

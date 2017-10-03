@@ -37,6 +37,11 @@ describe('#parse', function() {
         assert.throw(function () {parse('((');},
                      Error, "Double (");
     });
+
+    it('should fail if a command is missing', function() {
+        assert.throw(function () {parse('()');},
+                     Error, "Missing cmd");
+    });
 });
 
 var renderExprAsLisp = clubExpr.renderExprAsLisp;
@@ -175,6 +180,11 @@ describe('#renderLispAsLaTeX', function() {
     it('should fail if the command is unknown', function() {
         assert.throw(function () {renderLispAsLaTeX('(Unk a b)');},
                      Error, "Unknown cmd:Unk");
+    });
+
+    it('should fail if too few args for Somme', function() {
+        assert.throw(function () {renderLispAsLaTeX('(Somme a)');},
+                     Error, "Somme: nb args < 2");
     });
 });
 
