@@ -45,6 +45,8 @@ var tokenize = function(input) {
 
 var buildTree = function(input, list) {
   if (list === undefined) {
+    if (input[0] !== "(")
+      throw new Error("Missing starting (");
     return buildTree(input, []);
   } else {
     var token = input.shift();

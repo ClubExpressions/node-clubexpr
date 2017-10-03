@@ -22,6 +22,11 @@ describe('#parse', function() {
     it('should parse a nested expression', function() {
         sdEqual(parse('(a (b c) d)'), ['a', ['b', 'c'], 'd']);
     });
+
+    it('should fail if the starting ( is missing', function() {
+        assert.throw(function () {parse('a');},
+                     Error, "Missing starting (");
+    });
 });
 
 var renderExprAsLisp = clubExpr.renderExprAsLisp;
