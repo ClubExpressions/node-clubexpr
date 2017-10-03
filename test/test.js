@@ -32,6 +32,11 @@ describe('#parse', function() {
         assert.throw(function () {parse('(a b');},
                      Error, "Missing )");
     });
+
+    it('should fail if a double ( is found', function() {
+        assert.throw(function () {parse('((');},
+                     Error, "Double (");
+    });
 });
 
 var renderExprAsLisp = clubExpr.renderExprAsLisp;

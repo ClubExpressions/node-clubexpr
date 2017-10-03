@@ -55,6 +55,8 @@ var buildTree = function(input, list, lastToken) {
         throw new Error("Missing )");
       return list.pop();
     } else if (token === "(") {
+      if (input[0] === "(")
+        throw new Error("Double (");
       list.push(buildTree(input, [], token));
       return buildTree(input, list, token);
     } else if (token === ")") {
