@@ -89,6 +89,11 @@ var skipMultSign = function (lastArg, arg) {
     return isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg);
 }
 
+function twoArgs(op, nbArgs) {
+  if (nbArgs < 2) throw new Error(op + ": nb args < 2");
+  if (nbArgs > 2) throw new Error(op + ": nb args > 2");
+}
+
 function twoOrMoreArgs(op, nbArgs) {
   if (nbArgs < 2) throw new Error(op + ": nb args < 2");
 }
@@ -113,7 +118,10 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       twoOrMoreArgs('Somme', nbArgs);
       latex = args.join('+');
     }
-    if (cmd === 'Diff'     ) latex = args[0] + "-" + args[1];
+    if (cmd === 'Diff') {
+      twoArgs('Diff', nbArgs);
+      latex = args.join('-');
+    }
     if (cmd === 'Produit'  ) {
         var lastArg = args[0];
         latex = args[0];

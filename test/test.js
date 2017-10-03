@@ -186,6 +186,16 @@ describe('#renderLispAsLaTeX', function() {
         assert.throw(function () {renderLispAsLaTeX('(Somme a)');},
                      Error, "Somme: nb args < 2");
     });
+
+    it('should fail if too few args for Diff', function() {
+        assert.throw(function () {renderLispAsLaTeX('(Diff a)');},
+                     Error, "Diff: nb args < 2");
+    });
+
+    it('should fail if too many args for Diff', function() {
+        assert.throw(function () {renderLispAsLaTeX('(Diff a b c)');},
+                     Error, "Diff: nb args > 2");
+    });
 });
 
 var replace = clubExpr.replaceValuesWith;
