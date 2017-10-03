@@ -27,6 +27,11 @@ describe('#parse', function() {
         assert.throw(function () {parse('a');},
                      Error, "Missing starting (");
     });
+
+    it('should fail if a ) is missing', function() {
+        assert.throw(function () {parse('(a b');},
+                     Error, "Missing )");
+    });
 });
 
 var renderExprAsLisp = clubExpr.renderExprAsLisp;

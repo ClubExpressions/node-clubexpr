@@ -43,7 +43,7 @@ var tokenize = function(input) {
               .split(/\s+/);
 };
 
-var buildTree = function(input, list) {
+var buildTree = function(input, list, lastToken) {
   if (list === undefined) {
     if (input[0] !== "(")
       throw new Error("Missing starting (");
@@ -51,14 +51,16 @@ var buildTree = function(input, list) {
   } else {
     var token = input.shift();
     if (token === undefined) {
+      if (lastToken !== undefined && lastToken !== ")")
+        throw new Error("Missing )");
       return list.pop();
     } else if (token === "(") {
       list.push(buildTree(input, []));
       return buildTree(input, list);
     } else if (token === ")") {
-      return list;
+      return buildTree([], [list], ")");
     } else {
-      return buildTree(input, list.concat(token));
+      return buildTree(input, list.concat(token), token);
     }
   }
 };
