@@ -56,7 +56,7 @@ var buildTree = function(input, list, lastToken) {
       if (lastToken !== "(" && lastToken !== ")")
         throw new Error("Missing )");
       var parsed = list.pop();
-      if (parsed.length == 1)
+      if (typeof parsed[0] == "object")
         throw new Error("Trailing )");
       return parsed;
     } else if (token === "(") {

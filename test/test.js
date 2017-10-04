@@ -16,6 +16,14 @@ describe('#parse', function() {
                      Error, "Empty expr");
     });
 
+    it('should parse an expression with no arg', function() {
+        sdEqual(parse('(a)'), ['a']);
+    });
+
+    it('should parse an expression with no arg (longer command)', function() {
+        sdEqual(parse('(ab)'), ['ab']);
+    });
+
     it('should parse a single expression with one arg', function() {
         sdEqual(parse('(a b)'), ['a', 'b']);
     });
