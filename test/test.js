@@ -38,9 +38,19 @@ describe('#parse', function() {
                      Error, "Missing )");
     });
 
+    it('should fail if args are missing', function() {
+        assert.throw(function () {parse('(a)');},
+                     Error, "Args missing for a");
+    });
+
     it('should fail if a double ( is found', function() {
         assert.throw(function () {parse('((');},
                      Error, "Double (");
+    });
+
+    it('should fail if a ) is trailing', function() {
+        assert.throw(function () {parse('(a b))');},
+                     Error, "Trailing )");
     });
 
     it('should fail if a command is missing', function() {
