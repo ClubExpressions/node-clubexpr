@@ -38,11 +38,6 @@ describe('#parse', function() {
                      Error, "Missing )");
     });
 
-    it('should fail if args are missing', function() {
-        assert.throw(function () {parse('(a)');},
-                     Error, "Args missing for a");
-    });
-
     it('should fail if a double ( is found', function() {
         assert.throw(function () {parse('((');},
                      Error, "Double (");
