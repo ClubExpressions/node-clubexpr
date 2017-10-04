@@ -45,6 +45,8 @@ var tokenize = function(input) {
 
 var buildTree = function(input, list, lastToken) {
   if (list === undefined) {
+    if (input == "")
+      throw new Error("Empty expr");
     if (input[0] !== "(")
       throw new Error("Missing starting (");
     return buildTree(input, []);

@@ -11,6 +11,11 @@ var clubExpr = require('../index');
 var parse = clubExpr.parse;
 
 describe('#parse', function() {
+    it('should fail if the source is empty', function() {
+        assert.throw(function () {parse('');},
+                     Error, "Empty expr");
+    });
+
     it('should parse a single expression with one arg', function() {
         sdEqual(parse('(a b)'), ['a', 'b']);
     });
