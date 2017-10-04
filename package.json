@@ -6,7 +6,7 @@
   "scripts": {
     "build-demo": "browserify demo.js > bundle.js",
     "build-react-demo": "browserify -t [ babelify --presets [ react ] ] react/index.js -o bundle.js",
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec || true"
   },
   "repository": {
     "type": "git",
