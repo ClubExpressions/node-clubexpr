@@ -43,33 +43,37 @@ var tokenize = function(input) {
               .split(/\s+/);
 };
 
-var buildTree = function(input, list, lastToken) {
+var buildTree = function(input, list, openParens) {
   if (list === undefined) {
     if (input == "")
       throw new Error("Empty expr");
     if (input[0] !== "(")
       throw new Error("Missing starting (");
-    return buildTree(input, []);
+    return buildTree(input, [], 0);
   } else {
     var token = input.shift();
-    if (token === undefined) {
-      if (lastToken !== "(" && lastToken !== ")")
+    if (token === "closing )") {
+      if (openParens < 0)
+        throw new Error("Trailing )");
+      return list.pop();
+    } else if (token === undefined) {
+      if (openParens < 0)
+        throw new Error("Trailing )");
+      if (openParens > 0)
         throw new Error("Missing )");
       var parsed = list.pop();
-      if (typeof parsed[0] == "object")
-        throw new Error("Trailing )");
       return parsed;
     } else if (token === "(") {
       if (input[0] === "(")
         throw new Error("Double (");
       if (input[0] === ")")
         throw new Error("Missing cmd");
-      list.push(buildTree(input, [], token));
-      return buildTree(input, list, token);
+      list.push(buildTree(input, [], openParens + 1));
+      return buildTree(input, list, openParens);
     } else if (token === ")") {
-      return buildTree([], [list], token);
+      return buildTree(["closing )"], [list], openParens - 1);
     } else {
-      return buildTree(input, list.concat(token), token);
+      return buildTree(input, list.concat(token), openParens);
     }
   }
 };

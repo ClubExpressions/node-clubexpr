@@ -46,6 +46,11 @@ describe('#parse', function() {
                      Error, "Missing )");
     });
 
+    it('should fail if a ) is missing in a nested expression', function() {
+        assert.throw(function () {parse('(a (b 2)');},
+                     Error, "Missing )");
+    });
+
     it('should fail if a double ( is found', function() {
         assert.throw(function () {parse('((');},
                      Error, "Double (");
