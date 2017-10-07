@@ -57,8 +57,6 @@ var buildTree = function(input, list, openParens) {
         throw new Error("Trailing )");
       return list.pop();
     } else if (token === undefined) {
-      if (openParens < 0)
-        throw new Error("Trailing )");
       if (openParens > 0)
         throw new Error("Missing )");
       var parsed = list.pop();
