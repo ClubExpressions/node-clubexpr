@@ -129,12 +129,10 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     if (cmd === 'Somme') {
       twoOrMoreArgs('Somme', nbArgs);
       latex = args.join('+');
-    }
-    if (cmd === 'Diff') {
+    } else if (cmd === 'Diff') {
       twoArgs('Diff', nbArgs);
       latex = args.join('-');
-    }
-    if (cmd === 'Produit') {
+    } else if (cmd === 'Produit') {
       twoOrMoreArgs('Produit', nbArgs);
       var lastArg = args[0];
       latex = args[0];
@@ -146,28 +144,22 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
               latex = latex + '×' + arg;
           lastArg = arg;
       }
-    }
-    if (cmd === 'Quotient') {
+    } else if (cmd === 'Quotient') {
       twoArgs('Quotient', nbArgs);
       latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
-    }
-    if (cmd === 'Opposé') {
+    } else if (cmd === 'Opposé') {
       oneArg('Opposé', nbArgs);
       latex = "-" + args[0];
-    }
-    if (cmd === 'Inverse') {
+    } else if (cmd === 'Inverse') {
       oneArg('Inverse', nbArgs);
       latex = "\\frac{1}{" + args[0] + "}";
-    }
-    if (cmd === 'Carré') {
+    } else if (cmd === 'Carré') {
       oneArg('Carré', nbArgs);
       latex = args[0] + "^2";
-    }
-    if (cmd === 'Puissance') {
+    } else if (cmd === 'Puissance') {
       twoArgs('Diff', nbArgs);
       latex = args[0] + "^" + args[1];
-    }
-    if (cmd === 'Racine') {
+    } else if (cmd === 'Racine') {
       oneArg('Racine', nbArgs);
       latex = "\\sqrt{" + args[0] + "}";
     }
