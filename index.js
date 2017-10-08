@@ -96,6 +96,11 @@ var skipMultSign = function (lastArg, arg) {
     return isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg);
 }
 
+function oneArg(op, nbArgs) {
+  if (nbArgs < 1) throw new Error(op + ": nb args < 1");
+  if (nbArgs > 1) throw new Error(op + ": nb args > 1");
+}
+
 function twoArgs(op, nbArgs) {
   if (nbArgs < 2) throw new Error(op + ": nb args < 2");
   if (nbArgs > 2) throw new Error(op + ": nb args > 2");
@@ -129,7 +134,8 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       twoArgs('Diff', nbArgs);
       latex = args.join('-');
     }
-    if (cmd === 'Produit'  ) {
+    if (cmd === 'Produit') {
+      twoOrMoreArgs('Produit', nbArgs);
       var lastArg = args[0];
       latex = args[0];
       for (var i = 1; i < args.length; i++) {
@@ -141,12 +147,30 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
           lastArg = arg;
       }
     }
-    if (cmd === 'Quotient' ) latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
-    if (cmd === 'Opposé'   ) latex = "-" + args[0];
-    if (cmd === 'Inverse'  ) latex = "\\frac{1}{" + args[0] + "}";
-    if (cmd === 'Carré'    ) latex = args[0] + "^2";
-    if (cmd === 'Puissance') latex = args[0] + "^" + args[1];
-    if (cmd === 'Racine'   ) latex = "\\sqrt{" + args[0] + "}";
+    if (cmd === 'Quotient') {
+      twoArgs('Quotient', nbArgs);
+      latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
+    }
+    if (cmd === 'Opposé') {
+      oneArg('Opposé', nbArgs);
+      latex = "-" + args[0];
+    }
+    if (cmd === 'Inverse') {
+      oneArg('Inverse', nbArgs);
+      latex = "\\frac{1}{" + args[0] + "}";
+    }
+    if (cmd === 'Carré') {
+      oneArg('Carré', nbArgs);
+      latex = args[0] + "^2";
+    }
+    if (cmd === 'Puissance') {
+      twoArgs('Diff', nbArgs);
+      latex = args[0] + "^" + args[1];
+    }
+    if (cmd === 'Racine') {
+      oneArg('Racine', nbArgs);
+      latex = "\\sqrt{" + args[0] + "}";
+    }
     if (latex === '') throw new Error("Unknown cmd:" + cmd);
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
