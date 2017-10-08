@@ -130,16 +130,16 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       latex = args.join('-');
     }
     if (cmd === 'Produit'  ) {
-        var lastArg = args[0];
-        latex = args[0];
-        for (var i = 1; i < args.length; i++) {
-            var arg = args[i];
-            if (skipMultSign(lastArg, arg))
-                latex = latex + arg;
-            else
-                latex = latex + '×' + arg;
-            lastArg = arg;
-        }
+      var lastArg = args[0];
+      latex = args[0];
+      for (var i = 1; i < args.length; i++) {
+          var arg = args[i];
+          if (skipMultSign(lastArg, arg))
+              latex = latex + arg;
+          else
+              latex = latex + '×' + arg;
+          lastArg = arg;
+      }
     }
     if (cmd === 'Quotient' ) latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
     if (cmd === 'Opposé'   ) latex = "-" + args[0];
@@ -151,7 +151,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
   } else {
-      return expr;
+    return expr;
   }
 }
 
