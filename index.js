@@ -488,7 +488,7 @@ exports.expressions = function () {
   {"nom" : "Somme d’un nombre avec un produit",
    "conv": [MD,X],
    "expr": [S,1,[P,2,a]]},
-  {"nom" : "Différence entre un nombre et un opposé",
+  {"nom" : "Différence entre un nombre et l’opposé d’un nombre",
    "conv": [Pa],
    "expr": [D,1,[O,2]]},
   {"nom" : "Différence entre multiple et nombre",
