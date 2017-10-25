@@ -222,6 +222,9 @@ var parens = function (cmd, parentCmd, pos) {
     if ((parentCmd == O) || (parentCmd == D && pos == 1)) {
         return belongsTo(cmd, [S,D,O]);
     }
+    if (parentCmd == S && cmd == O && pos == 1) {
+        return true;
+    }
     return false;
 }
 
@@ -488,9 +491,18 @@ exports.expressions = function () {
   {"nom" : "Somme d’un nombre avec un produit",
    "conv": [MD,X],
    "expr": [S,1,[P,2,a]]},
+  {"nom" : "Somme entre un nombre et l’opposé d’un nombre",
+   "conv": [Pa],
+   "expr": [S,1,[O,2]]},
+  {"nom" : "Somme entre un nombre et l’opposé d’une lettre",
+   "conv": [Pa],
+   "expr": [S,1,[O,a]]},
   {"nom" : "Différence entre un nombre et l’opposé d’un nombre",
    "conv": [Pa],
    "expr": [D,1,[O,2]]},
+  {"nom" : "Différence entre un nombre et l’opposé d’une lettre",
+   "conv": [Pa],
+   "expr": [D,1,[O,a]]},
   {"nom" : "Différence entre multiple et nombre",
    "conv": [MD,X],
    "expr": [D,[P,1,a],2]},
