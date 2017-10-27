@@ -62,6 +62,8 @@ var buildTree = function(input, list, openParens) {
       var parsed = list.pop();
       return parsed;
     } else if (token === "(") {
+      if (openParens == 0 && list.length > 0)
+        throw new Error("More than one root");
       if (input[0] === "(")
         throw new Error("Double (");
       if (input[0] === ")")

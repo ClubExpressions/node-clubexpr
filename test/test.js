@@ -65,6 +65,11 @@ describe('#parse', function() {
         assert.throw(function () {parse('()');},
                      Error, "Missing cmd");
     });
+
+    it('should fail if there are two roots (groups of parens)', function() {
+        assert.throw(function () {parse('(a b)(c d)');},
+                     Error, "More than one root");
+    });
 });
 
 var renderExprAsLisp = clubExpr.renderExprAsLisp;
