@@ -11,6 +11,11 @@ var clubExpr = require('../index');
 var parse = clubExpr.parse;
 
 describe('#parse', function() {
+    it('should fail if the source contains bad characters', function() {
+        assert.throw(function () {parse('"');},
+                     Error, "Invalid char: \"");
+    });
+
     it('should fail if the source is empty', function() {
         assert.throw(function () {parse('');},
                      Error, "Empty expr");

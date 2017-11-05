@@ -23,6 +23,12 @@ exports.operations = [
   'Puissance',
   'Racine'];
 
+var allowedChars = " ()" +
+                   "01234567789" +
+                   "abcdefghijklmnopqrstuvwxyz" +
+                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                   "é";
+
 /**
  * @summary Parses Lisp source which represents an expression.
  *
@@ -33,6 +39,10 @@ exports.operations = [
  * @return A nested JS array
  */
 exports.parse = function(input) {
+  input.split('').map(function (token) {
+    if (allowedChars.indexOf(token) == -1)
+      throw new Error("Invalid char: " + token);
+  });
   return buildTree(tokenize(input));
 };
 
