@@ -63,17 +63,15 @@ var buildTree = function(input, list, openParens) {
   } else {
     var token = input.shift();
     if (token === "closing )") {
-      if (openParens < 0)
-        throw new Error("Trailing )");
       return list.pop();
     } else if (token === undefined) {
       if (openParens > 0)
         throw new Error("Missing )");
       var parsed = list.pop();
       return parsed;
+    } else if (openParens == 0 && list.length > 0) {
+      throw new Error("Already closed");
     } else if (token === "(") {
-      if (openParens == 0 && list.length > 0)
-        throw new Error("More than one root");
       if (input[0] === "(")
         throw new Error("Double (");
       if (input[0] === ")")

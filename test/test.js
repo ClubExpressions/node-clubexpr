@@ -61,19 +61,24 @@ describe('#parse', function() {
                      Error, "Double (");
     });
 
+    it('should fail if the expr is already closed', function() {
+        assert.throw(function () {parse('(a b) c');},
+                     Error, "Already closed");
+    });
+
     it('should fail if a ) is trailing', function() {
         assert.throw(function () {parse('(a b))');},
-                     Error, "Trailing )");
+                     Error, "Already closed");
+    });
+
+    it('should fail if a ) is trailing', function() {
+        assert.throw(function () {parse('(a b) (');},
+                     Error, "Already closed");
     });
 
     it('should fail if a command is missing', function() {
         assert.throw(function () {parse('()');},
                      Error, "Missing cmd");
-    });
-
-    it('should fail if there are two roots (groups of parens)', function() {
-        assert.throw(function () {parse('(a b)(c d)');},
-                     Error, "More than one root");
     });
 });
 
