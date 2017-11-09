@@ -151,7 +151,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
           if (skipMultSign(lastArg, arg))
               latex = latex + arg;
           else
-              latex = latex + '×' + arg;
+              latex = latex + ' \\times ' + arg;
           lastArg = arg;
       }
     } else if (cmd === 'Quotient') {
