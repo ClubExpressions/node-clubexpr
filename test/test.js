@@ -218,6 +218,10 @@ describe('#renderLispAsLaTeX', function() {
         equal(renderLispAsLaTeX('(Somme a (Produit b c))'), 'a+bc');
     });
 
+    it('should render an expression with a greek letter', function() {
+        equal(renderLispAsLaTeX('(Produit 2 pi)'), '2\\pi');
+    });
+
     it('should fail if the command is unknown', function() {
         assert.throw(function () {renderLispAsLaTeX('(Unk a b)');},
                      Error, "Unknown cmd: Unk");
@@ -236,6 +240,11 @@ describe('#renderLispAsLaTeX', function() {
     it('should fail if too many args for Diff', function() {
         assert.throw(function () {renderLispAsLaTeX('(Diff a b c)');},
                      Error, "Diff: nb args > 2");
+    });
+
+    it('should fail if a leaf is not allowed', function() {
+        assert.throw(function () {renderLispAsLaTeX('(a bc)');},
+                     Error, "Bad leaf: bc");
     });
 });
 

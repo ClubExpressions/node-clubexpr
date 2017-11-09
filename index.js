@@ -120,6 +120,12 @@ function twoOrMoreArgs(op, nbArgs) {
   if (nbArgs < 2) throw new Error(op + ": nb args < 2");
 }
 
+var numRegex = /^[-]?\d+([\.,]\d+)?$/;
+var greekLetters = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta',
+                    'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu',
+                    'xi', 'omicron', 'pi', 'rho', 'sigmaf', 'sigma', 'tau',
+                    'upsilon', 'phi', 'chi', 'psi', 'omega'];
+
 /**
  * @summary Renders an expression as LaTex source.
  *
@@ -177,7 +183,18 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
   } else {
-    return expr;
+    if (numRegex.test(expr)) {
+      // number
+      return expr;
+    } else if (expr.length == 1) {
+      // single letter
+      return expr;
+    } else if (greekLetters.indexOf(expr.toLowerCase()) >= 0) {
+      // greek letter
+      return "\\" + expr;
+    } else {
+      throw new Error("Bad leaf: " + expr);
+    }
   }
 }
 
