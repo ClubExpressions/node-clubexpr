@@ -173,7 +173,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       oneArg('Racine', nbArgs);
       latex = "\\sqrt{" + args[0] + "}";
     }
-    if (latex === '') throw new Error("Unknown cmd:" + cmd);
+    if (latex === '') throw new Error("Unknown cmd: " + cmd);
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
   } else {

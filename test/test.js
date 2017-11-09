@@ -220,7 +220,7 @@ describe('#renderLispAsLaTeX', function() {
 
     it('should fail if the command is unknown', function() {
         assert.throw(function () {renderLispAsLaTeX('(Unk a b)');},
-                     Error, "Unknown cmd:Unk");
+                     Error, "Unknown cmd: Unk");
     });
 
     it('should fail if too few args for Somme', function() {
