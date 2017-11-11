@@ -87,6 +87,24 @@ var buildTree = function(input, list, openParens) {
 };
 
 /**
+ * @summary Extracts the nature of an expression as Lisp source.
+ *
+ * @param src Lisp source, aka Code Club
+ * @return nature The nature of the expr, or the empty string
+ */
+exports.natureFromLisp = function (src) {
+    var toReturn = '';
+    src = src.trim();
+    if (src[0] === '(') src = src.slice(1);
+    src = src.trim();
+    src = src.split(' ')[0];
+    exports.operations.forEach(function (operation) {
+        if (src == operation) toReturn = operation;
+    });
+    return toReturn;
+}
+
+/**
  * @summary Renders an expression as Lisp source.
  *
  * @param expr An expression

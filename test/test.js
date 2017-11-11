@@ -82,6 +82,39 @@ describe('#parse', function() {
     });
 });
 
+var natureFromLisp = clubExpr.natureFromLisp;
+
+describe('#natureFromLisp', function() {
+    it('should fail silently for some malformed expressions', function() {
+        var expressions = ['', 'b', ')', '(S'];
+        expressions.forEach(function (src) {
+            equal(natureFromLisp(src), '');
+        });
+    });
+
+    it('should fail silently for some wellformed expressions', function() {
+        var expressions = ['(S 1 1)'];
+        expressions.forEach(function (src) {
+            equal(natureFromLisp(src), '');
+        });
+    });
+
+    it('should return the correct nature of some expressions', function() {
+        var exprsAndNatures = [
+            ['(Somme 1 1)', 'Somme'],
+            [' (Somme 1 1)', 'Somme'],
+            ['( Somme 1 1)', 'Somme'],
+            [' ( Somme 1 1)', 'Somme']
+        ];
+        exprsAndNatures.forEach(function (exprAndNature) {
+            var src =    exprAndNature[0];
+            var nature = exprAndNature[1];
+            equal(natureFromLisp(src), nature);
+        });
+    });
+});
+
+
 var renderExprAsLisp = clubExpr.renderExprAsLisp;
 
 describe('#renderExprAsLisp', function() {
