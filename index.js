@@ -23,7 +23,7 @@ exports.operations = [
   'Puissance',
   'Racine'];
 
-var allowedChars = " ()" +
+var allowedChars = " ()\n\t" +
                    "01234567789" +
                    "abcdefghijklmnopqrstuvwxyz" +
                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +

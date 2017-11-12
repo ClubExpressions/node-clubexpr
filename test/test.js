@@ -41,6 +41,10 @@ describe('#parse', function() {
         sdEqual(parse('(a (b c) d)'), ['a', ['b', 'c'], 'd']);
     });
 
+    it('should parse an expression with creative whitespace', function() {
+        sdEqual(parse(' ( a \n b \t c ) '), ['a', 'b', 'c']);
+    });
+
     it('should fail if the starting ( is missing', function() {
         assert.throw(function () {parse('a');},
                      Error, "Missing starting (");
