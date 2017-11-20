@@ -98,6 +98,7 @@ exports.natureFromLisp = function (src) {
     if (src[0] === '(') src = src.slice(1);
     src = src.trim();
     src = src.split(' ')[0];
+    src = src.split('(')[0];
     exports.operations.forEach(function (operation) {
         if (src == operation) toReturn = operation;
     });

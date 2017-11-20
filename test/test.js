@@ -108,6 +108,7 @@ describe('#natureFromLisp', function() {
             ['(Somme 1 1)', 'Somme'],
             [' (Somme 1 1)', 'Somme'],
             ['( Somme 1 1)', 'Somme'],
+            ['(Somme(', 'Somme'],
             [' ( Somme 1 1)', 'Somme']
         ];
         exprsAndNatures.forEach(function (exprAndNature) {
