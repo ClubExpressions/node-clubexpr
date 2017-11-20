@@ -105,6 +105,10 @@ describe('#natureFromLisp', function() {
 
     it('should return the correct nature of some expressions', function() {
         var exprsAndNatures = [
+            ['Somme 1 1)', 'Somme'],
+            [' Somme 1 1)', 'Somme'],
+            ['  Somme 1 1)', 'Somme'],
+            ['Somme(', 'Somme'],
             ['(Somme 1 1)', 'Somme'],
             [' (Somme 1 1)', 'Somme'],
             ['( Somme 1 1)', 'Somme'],
