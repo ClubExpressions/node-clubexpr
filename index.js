@@ -140,10 +140,12 @@ function twoOrMoreArgs(op, nbArgs) {
 }
 
 var numRegex = /^[-]?\d+([\.,]\d+)?$/;
-var greekLetters = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta',
-                    'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu',
-                    'xi', 'omicron', 'pi', 'rho', 'sigmaf', 'sigma', 'tau',
-                    'upsilon', 'phi', 'chi', 'psi', 'omega'];
+var greekLetters = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'varepsilon',
+                    'zeta', 'eta', 'theta', 'vartheta', 'iota', 'kappa',
+                    'lambda', 'mu', 'nu', 'xi', 'pi', 'rho', 'varrho', 'sigma',
+                    'tau', 'upsilon', 'phi', 'varphi', 'chi', 'psi', 'omega',
+                    'Gamma', 'Delta', 'Theta', 'Lambda', 'Xi', 'Pi', 'Sigma',
+                    'Upsilon', 'Phi', 'Psi', 'Omega'];
 
 /**
  * @summary Renders an expression as LaTex source.
@@ -208,7 +210,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     } else if (expr.length == 1) {
       // single letter
       return expr;
-    } else if (greekLetters.indexOf(expr.toLowerCase()) >= 0) {
+    } else if (greekLetters.indexOf(expr) >= 0) {
       // greek letter
       return "\\" + expr;
     } else {
