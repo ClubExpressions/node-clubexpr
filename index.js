@@ -593,7 +593,7 @@ exports.expressions = function () {
   {"nom" : "Carré d’un opposé",
    "conv": [],
    "expr": [C,[O,a]]},
-  {"nom" : "Carré d’une somme",
+  {"nom" : "Carré d’une somme d’un nombre et d’une lettre",
    "conv": [Pa],
    "expr": [C,[S,1,a]]},
   {"nom" : "Somme d’un nombre avec un carré",
