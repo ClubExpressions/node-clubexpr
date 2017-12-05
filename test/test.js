@@ -191,6 +191,7 @@ var exprsRenderedAsLaTeX = [
             'a-1+2',
             '\\frac{a+b}{1}',
             '\\frac{1}{a+1}',
+            'a^{b+c}',
             '\\frac{1a}{2}',
             '-1a',
             '-\\frac{1}{a}',
