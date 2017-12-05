@@ -192,10 +192,11 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       latex = "\\frac{1}{" + args[0] + "}";
     } else if (cmd === 'Carré') {
       oneArg('Carré', nbArgs);
-      latex = args[0] + "^2";
+      // curly brackets for same code than with Puissance
+      latex = args[0] + "^{2}";
     } else if (cmd === 'Puissance') {
       twoArgs('Diff', nbArgs);
-      latex = args[0] + "^" + args[1];
+      latex = args[0] + "^{" + args[1] + "}";
     } else if (cmd === 'Racine') {
       oneArg('Racine', nbArgs);
       latex = "\\sqrt{" + args[0] + "}";
@@ -261,7 +262,7 @@ var parens = function (cmd, parentCmd, pos) {
     var C  = 'Carré';
     var Pu = 'Puissance';
     var R  = 'Racine';
-    if (belongsTo(parentCmd, [C,Pu])) {
+    if (belongsTo(parentCmd, [C,Pu]) && pos == 0) {
         return belongsTo(cmd, [S,D,O,P,Q,I]);
     }
     if (parentCmd == P) {
