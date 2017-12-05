@@ -250,6 +250,7 @@ var belongsTo = function (obj, arr) {
  *
  * @param cmd The current type of expr, aka command
  * @param parentCmd The parent command
+ * @pos Position in the list of args, starting with 0
  * @return a boolean
  */
 var parens = function (cmd, parentCmd, pos) {
