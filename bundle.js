@@ -16,6 +16,8 @@
 
 exports.operations = ['Somme', 'Diff', 'Produit', 'Quotient', 'Opposé', 'Inverse', 'Carré', 'Puissance', 'Racine'];
 
+var allowedChars = " ()\n\t" + "01234567789" + "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "é";
+
 /**
  * @summary Parses Lisp source which represents an expression.
  *
@@ -26,33 +28,65 @@ exports.operations = ['Somme', 'Diff', 'Produit', 'Quotient', 'Opposé', 'Invers
  * @return A nested JS array
  */
 exports.parse = function (input) {
-  return parenthesize(tokenize(input));
+  input.split('').map(function (token) {
+    if (allowedChars.indexOf(token) == -1) throw new Error("Invalid char: " + token);
+  });
+  return buildTree(tokenize(input));
 };
 
 var tokenize = function (input) {
   return input.replace(/\(/g, ' ( ').replace(/\)/g, ' ) ').trim().split(/\s+/);
 };
 
-var parenthesize = function (input, list) {
+var buildTree = function (input, list, openParens) {
   if (list === undefined) {
-    return parenthesize(input, []);
+    if (input == "") throw new Error("Empty expr");
+    if (input[0] !== "(") throw new Error("Missing starting (");
+    return buildTree(input, [], 0);
   } else {
     var token = input.shift();
-    if (token === undefined) {
+    if (token === "closing )") {
       return list.pop();
+    } else if (token === undefined) {
+      if (openParens > 0) throw new Error("Missing )");
+      var parsed = list.pop();
+      return parsed;
+    } else if (openParens == 0 && list.length > 0) {
+      throw new Error("Already closed");
     } else if (token === "(") {
-      list.push(parenthesize(input, []));
-      return parenthesize(input, list);
+      if (input[0] === "(") throw new Error("Double (");
+      if (input[0] === ")") throw new Error("Missing cmd");
+      list.push(buildTree(input, [], openParens + 1));
+      return buildTree(input, list, openParens);
     } else if (token === ")") {
-      return list;
+      return buildTree(["closing )"], [list], openParens - 1);
     } else {
-      return parenthesize(input, list.concat(token));
+      return buildTree(input, list.concat(token), openParens);
     }
   }
 };
 
 /**
- * @summary Renders an expression Lisp source.
+ * @summary Extracts the nature of an expression as Lisp source.
+ *
+ * @param src Lisp source, aka Code Club
+ * @return nature The nature of the expr, or the empty string
+ */
+exports.natureFromLisp = function (src) {
+  var toReturn = '';
+  src = src.trim();
+  if (src[0] === '(') src = src.slice(1);
+  src = src.trim();
+  src = src.split(' ')[0];
+  src = src.split('(')[0];
+  exports.operations.forEach(function (operation) {
+    if (src == operation) toReturn = operation;
+  });
+  return toReturn;
+};
+
+/**
+ * @summary Renders an expression as Lisp source.
  *
  * @param expr An expression
  * @return Lisp source, aka Code Club
@@ -71,8 +105,25 @@ var skipMultSign = function (lastArg, arg) {
   return isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg);
 };
 
+function oneArg(op, nbArgs) {
+  if (nbArgs < 1) throw new Error(op + ": nb args < 1");
+  if (nbArgs > 1) throw new Error(op + ": nb args > 1");
+}
+
+function twoArgs(op, nbArgs) {
+  if (nbArgs < 2) throw new Error(op + ": nb args < 2");
+  if (nbArgs > 2) throw new Error(op + ": nb args > 2");
+}
+
+function twoOrMoreArgs(op, nbArgs) {
+  if (nbArgs < 2) throw new Error(op + ": nb args < 2");
+}
+
+var numRegex = /^[-]?\d+([\.,]\d+)?$/;
+var greekLetters = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'varepsilon', 'zeta', 'eta', 'theta', 'vartheta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'pi', 'rho', 'varrho', 'sigma', 'tau', 'upsilon', 'phi', 'varphi', 'chi', 'psi', 'omega', 'Gamma', 'Delta', 'Theta', 'Lambda', 'Xi', 'Pi', 'Sigma', 'Upsilon', 'Phi', 'Psi', 'Omega'];
+
 /**
- * @summary Renders an expression LaTex source.
+ * @summary Renders an expression as LaTex source.
  *
  * @param expr An expression
  * @param parentCmd An optional type of expr, aka command
@@ -82,33 +133,73 @@ var skipMultSign = function (lastArg, arg) {
 exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     var cmd = expr[0];
+    var nbArgs = expr.length - 1;
     var args = expr.slice(1).map(function (expr, idx) {
       return exports.renderExprAsLaTeX(expr, cmd, idx);
     });
     var latex = '';
-    if (cmd === 'Somme') latex = args.join('+');
-    if (cmd === 'Diff') latex = args[0] + "-" + args[1];
-    if (cmd === 'Produit') {
+    if (cmd === 'Somme') {
+      twoOrMoreArgs('Somme', nbArgs);
+      latex = args.join('+');
+    } else if (cmd === 'Diff') {
+      twoArgs('Diff', nbArgs);
+      latex = args.join('-');
+    } else if (cmd === 'Produit') {
+      twoOrMoreArgs('Produit', nbArgs);
       var lastArg = args[0];
       latex = args[0];
       for (var i = 1; i < args.length; i++) {
         var arg = args[i];
-        if (skipMultSign(lastArg, arg)) latex = latex + arg;else latex = latex + '×' + arg;
+        if (skipMultSign(lastArg, arg)) latex = latex + arg;else latex = latex + ' \\times ' + arg;
         lastArg = arg;
       }
+    } else if (cmd === 'Quotient') {
+      twoArgs('Quotient', nbArgs);
+      latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
+    } else if (cmd === 'Opposé') {
+      oneArg('Opposé', nbArgs);
+      latex = "-" + args[0];
+    } else if (cmd === 'Inverse') {
+      oneArg('Inverse', nbArgs);
+      latex = "\\frac{1}{" + args[0] + "}";
+    } else if (cmd === 'Carré') {
+      oneArg('Carré', nbArgs);
+      // curly brackets for same code than with Puissance
+      latex = args[0] + "^{2}";
+    } else if (cmd === 'Puissance') {
+      twoArgs('Diff', nbArgs);
+      latex = args[0] + "^{" + args[1] + "}";
+    } else if (cmd === 'Racine') {
+      oneArg('Racine', nbArgs);
+      latex = "\\sqrt{" + args[0] + "}";
     }
-    if (cmd === 'Quotient') latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
-    if (cmd === 'Opposé') latex = "-" + args[0];
-    if (cmd === 'Inverse') latex = "\\frac{1}{" + args[0] + "}";
-    if (cmd === 'Carré') latex = args[0] + "^2";
-    if (cmd === 'Puissance') latex = args[0] + "^" + args[1];
-    if (cmd === 'Racine') latex = "\\sqrt{" + args[0] + "}";
-    if (latex === '') return "Unknown cmd: " + cmd;
+    if (latex === '') throw new Error("Unknown cmd: " + cmd);
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
     return latex;
   } else {
-    return expr;
+    if (numRegex.test(expr)) {
+      // number
+      return expr;
+    } else if (expr.length == 1) {
+      // single letter
+      return expr;
+    } else if (greekLetters.indexOf(expr) >= 0) {
+      // greek letter
+      return "\\" + expr;
+    } else {
+      throw new Error("Bad leaf: " + expr);
+    }
   }
+};
+
+/**
+ * @summary Renders Lisp source as LaTeX source.
+ *
+ * @param src Lisp source, aka Code Club
+ * @return LaTeX source
+ */
+exports.renderLispAsLaTeX = function (src) {
+  return exports.renderExprAsLaTeX(exports.parse(src));
 };
 
 Array.prototype.pushIfAbsent = function (val) {
@@ -131,6 +222,7 @@ var belongsTo = function (obj, arr) {
  *
  * @param cmd The current type of expr, aka command
  * @param parentCmd The parent command
+ * @pos Position in the list of args, starting with 0
  * @return a boolean
  */
 var parens = function (cmd, parentCmd, pos) {
@@ -143,7 +235,7 @@ var parens = function (cmd, parentCmd, pos) {
   var C = 'Carré';
   var Pu = 'Puissance';
   var R = 'Racine';
-  if (belongsTo(parentCmd, [C, Pu])) {
+  if (belongsTo(parentCmd, [C, Pu]) && pos == 0) {
     return belongsTo(cmd, [S, D, O, P, Q, I]);
   }
   if (parentCmd == P) {
@@ -151,6 +243,9 @@ var parens = function (cmd, parentCmd, pos) {
   }
   if (parentCmd == O || parentCmd == D && pos == 1) {
     return belongsTo(cmd, [S, D, O]);
+  }
+  if (parentCmd == S && cmd == O && pos == 1) {
+    return true;
   }
   return false;
 };
@@ -389,9 +484,15 @@ exports.expressions = function () {
     "conv": [Pa],
     "expr": [P, 1, [D, a, 2]] }, { "nom": "Somme d’un nombre avec un produit",
     "conv": [MD, X],
-    "expr": [S, 1, [P, 2, a]] }, { "nom": "Différence entre un nombre et un opposé",
+    "expr": [S, 1, [P, 2, a]] }, { "nom": "Somme entre un nombre et l’opposé d’un nombre",
     "conv": [Pa],
-    "expr": [D, 1, [O, 2]] }, { "nom": "Différence entre multiple et nombre",
+    "expr": [S, 1, [O, 2]] }, { "nom": "Somme entre un nombre et l’opposé d’une lettre",
+    "conv": [Pa],
+    "expr": [S, 1, [O, a]] }, { "nom": "Différence entre un nombre et l’opposé d’un nombre",
+    "conv": [Pa],
+    "expr": [D, 1, [O, 2]] }, { "nom": "Différence entre un nombre et l’opposé d’une lettre",
+    "conv": [Pa],
+    "expr": [D, 1, [O, a]] }, { "nom": "Différence entre multiple et nombre",
     "conv": [MD, X],
     "expr": [D, [P, 1, a], 2] }, { "nom": "Somme d’un nombre avec un quotient",
     "conv": [MD],
@@ -407,7 +508,9 @@ exports.expressions = function () {
     "conv": [F],
     "expr": [Q, [S, a, b], 1] }, { "nom": "Inverse d’une somme",
     "conv": [F],
-    "expr": [I, [S, a, 1]] }, { "nom": "Multiple divisé par un nombre",
+    "expr": [I, [S, a, 1]] }, { "nom": "Nombre à la puissance d’une somme",
+    "conv": [],
+    "expr": [Pu, a, [S, b, c]] }, { "nom": "Multiple divisé par un nombre",
     "conv": [X, F],
     "expr": [Q, [P, 1, a], 2] }, { "nom": "Opposé d’un multiple",
     "conv": [MD, X],
@@ -419,9 +522,13 @@ exports.expressions = function () {
     "conv": [El],
     "expr": [O, [C, a]] }, { "nom": "Carré d’un opposé",
     "conv": [],
-    "expr": [C, [O, a]] }, { "nom": "Carré d’une somme",
+    "expr": [C, [O, a]] }, { "nom": "Carré d’une somme d’un nombre et d’une lettre",
     "conv": [Pa],
-    "expr": [C, [S, 1, a]] }, { "nom": "Somme d’un nombre avec un carré",
+    "expr": [C, [S, 1, a]] }, { "nom": "Carré d’une somme de lettres",
+    "conv": [Pa],
+    "expr": [C, [S, a, b]] }, { "nom": "Carré d’une différence de lettres",
+    "conv": [Pa],
+    "expr": [C, [D, a, b]] }, { "nom": "Somme d’un nombre avec un carré",
     "conv": [El],
     "expr": [S, 1, [C, a]] }, { "nom": "Multiple d’un carré",
     "conv": [El, X],
@@ -439,7 +546,9 @@ exports.expressions = function () {
     "conv": [El],
     "expr": [I, [C, a]] }, { "nom": "Racine du carré",
     "conv": [],
-    "expr": [R, [C, a]] }, { "nom": "Racine de la somme de deux carrés",
+    "expr": [R, [C, a]] }, { "nom": "Somme de deux carrés",
+    "conv": [El],
+    "expr": [S, [C, a], [C, b]] }, { "nom": "Racine de la somme de deux carrés",
     "conv": [El],
     "expr": [R, [S, [C, a], [C, b]]] }, { "nom": "Produit d’une lettre avec une somme d’un nombre et d’un multiple",
     "conv": [Pa, MD, X],
@@ -487,7 +596,8 @@ exports.expressions = function () {
     "conv": [],
     "expr": [D, [P, 1, [C, [S, a, 2]]], 3] }, { "nom": "Produit d’un nombre, d’une somme et d’une différence",
     "conv": [],
-    "expr": [P, 1, [S, 2, 3], [D, 4, 5]] }, { "nom": "Différence entre le carré d’une somme et un carré",
+    "expr": [P, 1, [S, 2, 3], [D, 4, 5]] },
+  { "nom": "Différence entre le carré d’une somme et un carré",
     "conv": [],
     "expr": [D, [C, [S, a, 1]], [C, a]] }, { "nom": "Polynôme du second degré avec tous les coefficients",
     "conv": [],
@@ -30205,11 +30315,9 @@ module.exports = React.createClass({
   _onPreventedOps: function (ops) {
     var filters = this.state.filters;
     filters.preventedOps = function (exprObj) {
-      var exprOps = exprObj.properties.ops;
+      var exprOps = exprObj.properties.uniqueOps;
       var bool = true;
       ops.map(function (op) {
-        console.log(op);
-        console.log(ops);
         if (exprOps.indexOf(op) !== -1) {
           bool = false;
           return false; // Stop the loop!
