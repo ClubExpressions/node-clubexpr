@@ -176,7 +176,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       for (var i = 1; i < args.length; i++) {
           var arg = args[i];
           if (skipMultSign(lastArg, arg))
-              latex = latex + arg;
+              latex = latex + ' ' + arg;
           else
               latex = latex + ' \\times ' + arg;
           lastArg = arg;
