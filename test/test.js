@@ -163,9 +163,9 @@ var exprsRenderedAsLaTeX = [
             '1-a',
             'a-b',
             '1 \\times 2',
-            '1a',
+            '1 a',
             'a \\times 1',
-            'ab',
+            'a b',
             'a \\times a',
             '\\frac{1}{2}',
             '\\frac{a}{1}',
@@ -176,14 +176,14 @@ var exprsRenderedAsLaTeX = [
             'a^{1}',
             '\\frac{1}{a}',
             '-a',
-            '1\\left(a+2\\right)',
-            '1\\left(a-2\\right)',
-            '1+2a',
+            '1 \\left(a+2\\right)',
+            '1 \\left(a-2\\right)',
+            '1+2 a',
             '1+\\left(-2\\right)',
             '1+\\left(-a\\right)',
             '1-\\left(-2\\right)',
             '1-\\left(-a\\right)',
-            '1a-2',
+            '1 a-2',
             '1+\\frac{a}{2}',
             '-a-1',
             '-\\left(a-1\\right)',
@@ -192,8 +192,8 @@ var exprsRenderedAsLaTeX = [
             '\\frac{a+b}{1}',
             '\\frac{1}{a+1}',
             'a^{b+c}',
-            '\\frac{1a}{2}',
-            '-1a',
+            '\\frac{1 a}{2}',
+            '-1 a',
             '-\\frac{1}{a}',
             '-\\frac{a}{b}',
             '-a^{2}',
@@ -202,43 +202,43 @@ var exprsRenderedAsLaTeX = [
             '\\left(a+b\\right)^{2}',
             '\\left(a-b\\right)^{2}',
             '1+a^{2}',
-            '1a^{2}',
-            '\\left(1a\\right)^{2}',
+            '1 a^{2}',
+            '\\left(1 a\\right)^{2}',
             '\\frac{a^{2}}{1}',
             '\\left(\\frac{a}{1}\\right)^{2}',
-            'a \\times 1a',
+            'a \\times 1 a',
             '\\left(\\frac{1}{a}\\right)^{2}',
             '\\frac{1}{a^{2}}',
             '\\sqrt{a^{2}}',
             'a^{2}+b^{2}',
             '\\sqrt{a^{2}+b^{2}}',
-            'a\\left(1+2a\\right)',
-            '1a-\\left(2+a\\right)',
-            '1a-2a',
-            '1\\left(a-2\\right)-3',
-            '1-2\\left(a+3\\right)',
-            '1a-a+2',
+            'a \\left(1+2 a\\right)',
+            '1 a-\\left(2+a\\right)',
+            '1 a-2 a',
+            '1 \\left(a-2\\right)-3',
+            '1-2 \\left(a+3\\right)',
+            '1 a-a+2',
             'a-\\frac{a}{1}+2',
             'a^{2}-a+1',
             '\\left(a+1\\right)^{2}-2',
-            '\\left(a+1\\right)\\left(a-2\\right)',
+            '\\left(a+1\\right) \\left(a-2\\right)',
             '-a^{2}+1',
-            '1a^{2}+a',
+            '1 a^{2}+a',
             '-a-a+1',
             'a-\\left(-a\\right)+1',
             'a^{2}-a+1',
-            'a-1\\left(a-2\\right)+3',
+            'a-1 \\left(a-2\\right)+3',
             '\\frac{a+1}{a-2}',
             '1+\\frac{2}{a+3}',
             '\\sqrt{\\left(1-2\\right)^{2}+\\left(3+4\\right)^{2}}',
-            '1\\left(2+3\\right)\\left(4+5\\right)',
-            'a^{2}+1a+2',
-            '1\\left(a+2\\right)^{2}-3',
-            '1\\left(2+3\\right)\\left(4-5\\right)',
+            '1 \\left(2+3\\right) \\left(4+5\\right)',
+            'a^{2}+1 a+2',
+            '1 \\left(a+2\\right)^{2}-3',
+            '1 \\left(2+3\\right) \\left(4-5\\right)',
             '\\left(a+1\\right)^{2}-a^{2}',
-            '1a^{2}+2a+3',
-            '\\frac{1a+2}{3a+4}',
-            '1+\\frac{2}{3a+4}'];
+            '1 a^{2}+2 a+3',
+            '\\frac{1 a+2}{3 a+4}',
+            '1+\\frac{2}{3 a+4}'];
 
 describe('#renderExprAsLaTeX', function() {
     it('should render the official expressions correctly', function() {
@@ -261,11 +261,11 @@ describe('#renderLispAsLaTeX', function() {
     });
 
     it('should render a nested expression', function() {
-        equal(renderLispAsLaTeX('(Somme a (Produit b c))'), 'a+bc');
+        equal(renderLispAsLaTeX('(Somme a (Produit b c))'), 'a+b c');
     });
 
     it('should render an expression with a greek letter', function() {
-        equal(renderLispAsLaTeX('(Produit 2 pi)'), '2\\pi');
+        equal(renderLispAsLaTeX('(Produit 2 pi)'), '2 \\pi');
     });
 
     it('should fail if the command is unknown', function() {
