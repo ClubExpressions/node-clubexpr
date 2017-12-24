@@ -193,10 +193,10 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     } else if (cmd === 'Carré') {
       oneArg('Carré', nbArgs);
       // curly brackets for same code than with Puissance
-      latex = args[0] + "^{2}";
+      latex = "{" + args[0] + "}^{2}";
     } else if (cmd === 'Puissance') {
-      twoArgs('Diff', nbArgs);
-      latex = args[0] + "^{" + args[1] + "}";
+      twoArgs('Puissance', nbArgs);
+      latex = "{" + args[0] + "}^{" + args[1] + "}";
     } else if (cmd === 'Racine') {
       oneArg('Racine', nbArgs);
       latex = "\\sqrt{" + args[0] + "}";
@@ -264,7 +264,7 @@ var parens = function (cmd, parentCmd, pos) {
     var Pu = 'Puissance';
     var R  = 'Racine';
     if (belongsTo(parentCmd, [C,Pu]) && pos == 0) {
-        return belongsTo(cmd, [S,D,O,P,Q,I]);
+        return belongsTo(cmd, [S,D,O,P,Q,I,C,Pu]);
     }
     if (parentCmd == P) {
         return belongsTo(cmd, [S,D,O]);
@@ -580,6 +580,12 @@ exports.expressions = function () {
   {"nom" : "Nombre à la puissance d’une somme",
    "conv": [],
    "expr": [Pu,a,[S,b,c]]},
+  {"nom" : "Lettre à la puissance (une lettre à la puissance d’une lettre)",
+   "conv": [],
+   "expr": [Pu,a,[Pu,b,c]]},
+  {"nom" : "Lettre à la puissance d’une lettre, à la puissance d’une lettre",
+   "conv": [],
+   "expr": [Pu,[Pu,a,b],c]},
   {"nom" : "Multiple divisé par un nombre",
    "conv": [X,F],
    "expr": [Q,[P,1,a],2]},
