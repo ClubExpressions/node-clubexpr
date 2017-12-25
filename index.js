@@ -67,8 +67,7 @@ var buildTree = function(input, list, warnings, openParens) {
     } else if (token === undefined) {
       if (openParens > 0)
         throw new Error("Missing )");
-      var parsed = list.pop();
-      return parsed;
+      return list.pop();
     } else if (openParens == 0 && list.length > 0) {
       throw new Error("Already closed");
     } else if (token === "(") {
