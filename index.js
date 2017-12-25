@@ -43,7 +43,7 @@ exports.parse = function(input) {
     if (allowedChars.indexOf(token) == -1)
       throw new Error("Invalid char: " + token);
   });
-  return buildTree(tokenize(input)).tree;
+  return buildTree(tokenize(input));
 };
 
 var tokenize = function(input) {
@@ -235,7 +235,9 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
  * @return LaTeX source
  */
 exports.renderLispAsLaTeX = function (src) {
-    return exports.renderExprAsLaTeX(exports.parse(src));
+    var parseResult = exports.parse(src);
+    var latexResult = exports.renderExprAsLaTeX(parseResult.tree);
+    return latexResult;
 }
 
 Array.prototype.pushIfAbsent = function(val) {

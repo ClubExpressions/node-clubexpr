@@ -5,6 +5,7 @@ chai.use(require('chai-shallow-deep-equal'));
 var assert = chai.assert;
 var equal = chai.assert.equal;
 var sdEqual = chai.assert.shallowDeepEqual;
+function treeEquals(x, y) {return sdEqual(x.tree, y);}
 
 var clubExpr = require('../index');
 
@@ -22,27 +23,27 @@ describe('#parse', function() {
     });
 
     it('should parse an expression with no arg', function() {
-        sdEqual(parse('(a)'), ['a']);
+        treeEquals(parse('(a)'), ['a']);
     });
 
     it('should parse an expression with no arg (longer command)', function() {
-        sdEqual(parse('(ab)'), ['ab']);
+        treeEquals(parse('(ab)'), ['ab']);
     });
 
     it('should parse a single expression with one arg', function() {
-        sdEqual(parse('(a b)'), ['a', 'b']);
+        treeEquals(parse('(a b)'), ['a', 'b']);
     });
 
     it('should parse a single expression with two args', function() {
-        sdEqual(parse('(a b c)'), ['a', 'b', 'c']);
+        treeEquals(parse('(a b c)'), ['a', 'b', 'c']);
     });
 
     it('should parse a nested expression', function() {
-        sdEqual(parse('(a (b c) d)'), ['a', ['b', 'c'], 'd']);
+        treeEquals(parse('(a (b c) d)'), ['a', ['b', 'c'], 'd']);
     });
 
     it('should parse an expression with creative whitespace', function() {
-        sdEqual(parse(' ( a \n b \t c ) '), ['a', 'b', 'c']);
+        treeEquals(parse(' ( a \n b \t c ) '), ['a', 'b', 'c']);
     });
 
     it('should fail if the starting ( is missing', function() {
@@ -147,7 +148,7 @@ describe('#renderingParsingRoundTrip', function() {
         expressions.forEach(function (exprObj) {
             var expr = exprObj.expr;
             // Here [ 'Somme', '1', '2' ] equals [ 'Somme', 1, 2 ]
-            sdEqual(parse(renderExprAsLisp(expr)), expr);
+            treeEquals(parse(renderExprAsLisp(expr)), expr);
         });
     });
 });
