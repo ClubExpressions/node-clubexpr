@@ -43,7 +43,7 @@ exports.parse = function(input) {
     if (allowedChars.indexOf(token) == -1)
       throw new Error("Invalid char: " + token);
   });
-  return buildTree(tokenize(input));
+  return buildTree(tokenize(input)).tree;
 };
 
 var tokenize = function(input) {
@@ -54,20 +54,24 @@ var tokenize = function(input) {
 };
 
 var buildTree = function(input, list, warnings, openParens) {
+  if (warnings === undefined) {
+    var warnings = [];
+  }
   if (list === undefined) {
     if (input == "")
       throw new Error("Empty expr");
     if (input[0] !== "(")
       throw new Error("Missing starting (");
-    return buildTree(input, [], [], 0);
+    var result = buildTree(input, [], [], 0);
+    return {tree: result.tree, warnings: warnings.concat(result.warnings)};
   } else {
     var token = input.shift();
     if (token === "closing )") {
-      return list.pop();
+      return {tree: list.pop(), warnings: warnings};
     } else if (token === undefined) {
       if (openParens > 0)
         throw new Error("Missing )");
-      return list.pop();
+      return {tree: list.pop(), warnings: warnings};
     } else if (openParens == 0 && list.length > 0) {
       throw new Error("Already closed");
     } else if (token === "(") {
@@ -75,12 +79,17 @@ var buildTree = function(input, list, warnings, openParens) {
         throw new Error("Double (");
       if (input[0] === ")")
         throw new Error("Missing cmd");
-      list.push(buildTree(input, [], [], openParens + 1));
-      return buildTree(input, list, warnings, openParens);
+      var result1 = buildTree(input, [], [], openParens + 1);
+      list.push(result1.tree);
+      var result2 = buildTree(input, list, warnings, openParens);
+      return {tree: result2.tree, warnings: warnings.concat(result1.warnings,
+                                                           result2.warnings)};
     } else if (token === ")") {
-      return buildTree(["closing )"], [list], warnings, openParens - 1);
+      var result = buildTree(["closing )"], [list], warnings, openParens - 1);
+      return {tree: result.tree, warnings: warnings.concat(result.warnings)};
     } else {
-      return buildTree(input, list.concat(token), warnings, openParens);
+      var result = buildTree(input, list.concat(token), warnings, openParens);
+      return {tree: result.tree, warnings: warnings.concat(result.warnings)};
     }
   }
 };
