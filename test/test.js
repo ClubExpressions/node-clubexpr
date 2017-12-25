@@ -51,6 +51,11 @@ describe('#parse', function() {
                      Error, "Missing starting (");
     });
 
+    it('should fail if a double ( is found', function() {
+        assert.throw(function () {parse('((');},
+                     Error, "Double (");
+    });
+
     it('should fail if a ) is missing', function() {
         assert.throw(function () {parse('(a b');},
                      Error, "Missing )");
@@ -59,11 +64,6 @@ describe('#parse', function() {
     it('should fail if a ) is missing in a nested expression', function() {
         assert.throw(function () {parse('(a (b 2)');},
                      Error, "Missing )");
-    });
-
-    it('should fail if a double ( is found', function() {
-        assert.throw(function () {parse('((');},
-                     Error, "Double (");
     });
 
     it('should fail if the expr is already closed', function() {
