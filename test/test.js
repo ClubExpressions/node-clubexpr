@@ -75,7 +75,7 @@ describe('#parse', function() {
                      Error, "Already closed");
     });
 
-    it('should fail if a ) is trailing', function() {
+    it('should fail if a ( is trailing', function() {
         assert.throw(function () {parse('(a b) (');},
                      Error, "Already closed");
     });
