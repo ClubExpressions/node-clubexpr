@@ -53,13 +53,13 @@ var tokenize = function(input) {
               .split(/\s+/);
 };
 
-var buildTree = function(input, list, openParens) {
+var buildTree = function(input, list, warnings, openParens) {
   if (list === undefined) {
     if (input == "")
       throw new Error("Empty expr");
     if (input[0] !== "(")
       throw new Error("Missing starting (");
-    return buildTree(input, [], 0);
+    return buildTree(input, [], [], 0);
   } else {
     var token = input.shift();
     if (token === "closing )") {
@@ -76,12 +76,12 @@ var buildTree = function(input, list, openParens) {
         throw new Error("Double (");
       if (input[0] === ")")
         throw new Error("Missing cmd");
-      list.push(buildTree(input, [], openParens + 1));
-      return buildTree(input, list, openParens);
+      list.push(buildTree(input, [], [], openParens + 1));
+      return buildTree(input, list, warnings, openParens);
     } else if (token === ")") {
-      return buildTree(["closing )"], [list], openParens - 1);
+      return buildTree(["closing )"], [list], warnings, openParens - 1);
     } else {
-      return buildTree(input, list.concat(token), openParens);
+      return buildTree(input, list.concat(token), warnings, openParens);
     }
   }
 };
