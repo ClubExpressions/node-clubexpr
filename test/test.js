@@ -56,29 +56,34 @@ describe('#parse', function() {
                      Error, "Double (");
     });
 
-    it('should fail if a ) is missing', function() {
-        assert.throw(function () {parse('(a b');},
-                     Error, "Missing )");
+    it('should warn us if a ) is missing', function() {
+        var result = parse('(a b');
+        // sdEqual(result.warnings, ["Missing )"]);
+        sdEqual(result.tree, ['a', 'b']);
     });
 
-    it('should fail if a ) is missing in a nested expression', function() {
-        assert.throw(function () {parse('(a (b 2)');},
-                     Error, "Missing )");
+    it('should warn us if a ) is missing in a nested expression', function() {
+        var result = parse('(a (b 2)');
+        // sdEqual(result.warnings, ["Missing )"]);
+        sdEqual(result.tree, ['a', ['b', '2']]);
     });
 
-    it('should fail if the expr is already closed', function() {
-        assert.throw(function () {parse('(a b) c');},
-                     Error, "Already closed");
+    it('should warn us if the expr is already closed', function() {
+        var result = parse('(a b) c');
+        // sdEqual(result.warnings, ["Already closed"]);
+        sdEqual(result.tree, ['a', 'b']);
     });
 
-    it('should fail if a ) is trailing', function() {
-        assert.throw(function () {parse('(a b))');},
-                     Error, "Already closed");
+    it('should warn us if a ) is trailing', function() {
+        var result = parse('(a b))');
+        // sdEqual(result.warnings, ["Already closed"]);
+        sdEqual(result.tree, ['a', 'b']);
     });
 
-    it('should fail if a ( is trailing', function() {
-        assert.throw(function () {parse('(a b) (');},
-                     Error, "Already closed");
+    it('should warn us if a ( is trailing', function() {
+        var result = parse('(a b) (');
+        // sdEqual(result.warnings, ["Already closed"]);
+        sdEqual(result.tree, ['a', 'b']);
     });
 
     it('should fail if a command is missing', function() {

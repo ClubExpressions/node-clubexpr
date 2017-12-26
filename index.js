@@ -69,11 +69,15 @@ var buildTree = function(input, list, warnings, openParens) {
     if (token === "closing )") {
       return {tree: list.pop(), warnings: warnings};
     } else if (token === undefined) {
-      if (openParens > 0)
-        throw new Error("Missing )");
-      return {tree: list.pop(), warnings: warnings};
+      if (openParens > 0) {
+        warnings.push("Missing )");
+      }
+      // fake closing parens
+      var result = buildTree(["closing )"], list, warnings, openParens - 1);
+      return {tree: result.tree, warning: warnings.concat(result.warnings)};
     } else if (openParens == 0 && list.length > 0) {
-      throw new Error("Already closed");
+      warnings.push("Already closed");
+      return {tree: list.pop(), warnings: warnings};
     } else if (token === "(") {
       if (input[0] === "(")
         throw new Error("Double (");
