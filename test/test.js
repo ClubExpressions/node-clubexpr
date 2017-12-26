@@ -58,31 +58,31 @@ describe('#parse', function() {
 
     it('should warn us if a ) is missing', function() {
         var result = parse('(a b');
-        // sdEqual(result.warnings, ["Missing )"]);
+        sdEqual(result.warnings, ["Missing )"]);
         sdEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ) is missing in a nested expression', function() {
         var result = parse('(a (b 2)');
-        // sdEqual(result.warnings, ["Missing )"]);
+        sdEqual(result.warnings, ["Missing )"]);
         sdEqual(result.tree, ['a', ['b', '2']]);
     });
 
     it('should warn us if the expr is already closed', function() {
         var result = parse('(a b) c');
-        // sdEqual(result.warnings, ["Already closed"]);
+        sdEqual(result.warnings, ["Already closed"]);
         sdEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ) is trailing', function() {
         var result = parse('(a b))');
-        // sdEqual(result.warnings, ["Already closed"]);
+        sdEqual(result.warnings, ["Already closed"]);
         sdEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ( is trailing', function() {
         var result = parse('(a b) (');
-        // sdEqual(result.warnings, ["Already closed"]);
+        sdEqual(result.warnings, ["Already closed"]);
         sdEqual(result.tree, ['a', 'b']);
     });
 
