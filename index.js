@@ -71,10 +71,9 @@ var buildTree = function(input, list, warnings, openParens) {
     } else if (token === undefined) {
       if (openParens > 0) {
         warnings.push("Missing )");
+        return {tree: list, warnings: warnings};
       }
-      // fake closing parens
-      var result = buildTree(["closing )"], list, warnings, openParens - 1);
-      return {tree: result.tree, warning: warnings.concat(result.warnings)};
+      return {tree: list.pop(), warnings: warnings};
     } else if (openParens == 0 && list.length > 0) {
       warnings.push("Already closed");
       return {tree: list.pop(), warnings: warnings};
