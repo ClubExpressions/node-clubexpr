@@ -43,7 +43,22 @@ exports.parse = function(input) {
     if (allowedChars.indexOf(token) == -1)
       throw new Error("Invalid char: " + token);
   });
-  return buildTree(tokenize(input));
+  var tokenized = tokenize(input);
+  var warnings = [];
+  if (tokenized.length == 1) {
+    if (tokenized[0] == "")
+      throw new Error("Empty expr");
+    if (tokenized[0] == "(")
+      throw new Error("Missing cmd");
+  }
+  if (tokenized[0] !== "(")
+    throw new Error("Missing starting (");
+  if (tokenized[tokenized.length - 1] == "(") {
+    warnings.pushIfAbsent("Missing cmd");
+  }
+  var result = buildTree(tokenized);
+  return {tree: result.tree,
+          warnings: warnings.concatIfAbsent(result.warnings)};
 };
 
 var tokenize = function(input) {
@@ -54,16 +69,8 @@ var tokenize = function(input) {
 };
 
 var buildTree = function(input, list, warnings, openParens) {
-  if (warnings === undefined) {
-    var warnings = [];
-  }
   if (list === undefined) {  // initial call, input is the only defined arg
-    if (input == "")
-      throw new Error("Empty expr");
-    if (input[0] !== "(")
-      throw new Error("Missing starting (");
-    var result = buildTree(input, [], [], 0);
-    return {tree: result.tree, warnings: warnings.concat(result.warnings)};
+    return buildTree(input, [], [], 0);
   } else {  // internal calls, list in undefined
     var token = input.shift();
     if (token === "closing )") {
@@ -85,14 +92,17 @@ var buildTree = function(input, list, warnings, openParens) {
       var result1 = buildTree(input, [], [], openParens + 1);
       list.push(result1.tree);
       var result2 = buildTree(input, list, warnings, openParens);
-      return {tree: result2.tree, warnings: warnings.concat(result1.warnings,
+      return {tree: result2.tree,
+              warnings: warnings.concatIfAbsent(result1.warnings,
                                                            result2.warnings)};
     } else if (token === ")") {
       var result = buildTree(["closing )"], [list], warnings, openParens - 1);
-      return {tree: result.tree, warnings: warnings.concat(result.warnings)};
+      return {tree: result.tree,
+              warnings: warnings.concatIfAbsent(result.warnings)};
     } else {
       var result = buildTree(input, list.concat(token), warnings, openParens);
-      return {tree: result.tree, warnings: warnings.concat(result.warnings)};
+      return {tree: result.tree,
+              warnings: warnings.concatIfAbsent(result.warnings)};
     }
   }
 };
@@ -175,7 +185,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     for (var i = 1; i <= nbArgs; i++) {
       var result = exports.renderExprAsLaTeX(expr[i], cmd, i-1);
       args.push(result.latex);
-      warnings.concat(result.warnings);
+      warnings.concatIfAbsent(result.warnings);
     }
     var latex = '';
     if (cmd === 'Somme') {
@@ -245,11 +255,18 @@ exports.renderLispAsLaTeX = function (src) {
     var parseResult = exports.parse(src);
     var latexResult = exports.renderExprAsLaTeX(parseResult.tree);
     return {latex: latexResult.latex,
-            warnings: parseResult.warnings.concat(latexResult.warnings)};
+            warnings: parseResult.warnings.concatIfAbsent(latexResult.warnings)};
 }
 
 Array.prototype.pushIfAbsent = function(val) {
     if (this.indexOf(val) == -1) this.push(val);
+};
+
+Array.prototype.concatIfAbsent = function(val) {
+    for (var i = 0; i < val.length; i += 1) {
+        if (this.indexOf(val[i]) == -1) this.push(val[i]);
+    }
+    return this;
 };
 
 /**

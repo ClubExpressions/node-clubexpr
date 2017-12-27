@@ -22,6 +22,11 @@ describe('#parse', function() {
                      Error, "Empty expr");
     });
 
+    it('should fail if a ( is the only char', function() {
+        assert.throw(function () {parse('(');},
+                     Error, "Missing cmd");
+    });
+
     it('should parse an expression with no arg', function() {
         treeEquals(parse('(a)'), ['a']);
     });
@@ -46,14 +51,26 @@ describe('#parse', function() {
         treeEquals(parse(' ( a \n b \t c ) '), ['a', 'b', 'c']);
     });
 
-    it('should fail if the starting ( is missing', function() {
+    it('should fail if the starting ( is missing (1 token)', function() {
         assert.throw(function () {parse('a');},
+                     Error, "Missing starting (");
+    });
+
+    it('should fail if the starting ( is missing (2 tokens)', function() {
+        assert.throw(function () {parse('a b');},
                      Error, "Missing starting (");
     });
 
     it('should fail if a double ( is found', function() {
         assert.throw(function () {parse('((');},
                      Error, "Double (");
+    });
+
+    it('should warn us if a ( is the last significant char', function() {
+        var result = parse('(a b (');
+        sdEqual(result.warnings, ["Missing cmd"]);
+        //sdEqual(result.warnings, ["Missing )", "Missing cmd"]);
+        sdEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ) is missing', function() {
@@ -82,7 +99,7 @@ describe('#parse', function() {
 
     it('should warn us if a ( is trailing', function() {
         var result = parse('(a b) (');
-        sdEqual(result.warnings, ["Already closed"]);
+        sdEqual(result.warnings, ["Missing cmd"]);
         sdEqual(result.tree, ['a', 'b']);
     });
 
