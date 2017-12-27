@@ -57,14 +57,14 @@ var buildTree = function(input, list, warnings, openParens) {
   if (warnings === undefined) {
     var warnings = [];
   }
-  if (list === undefined) {
+  if (list === undefined) {  // initial call, input is the only defined arg
     if (input == "")
       throw new Error("Empty expr");
     if (input[0] !== "(")
       throw new Error("Missing starting (");
     var result = buildTree(input, [], [], 0);
     return {tree: result.tree, warnings: warnings.concat(result.warnings)};
-  } else {
+  } else {  // internal calls, list in undefined
     var token = input.shift();
     if (token === "closing )") {
       return {tree: list.pop(), warnings: warnings};
