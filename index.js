@@ -70,12 +70,12 @@ var buildTree = function(input, list, warnings, openParens) {
       return {tree: list.pop(), warnings: warnings};
     } else if (token === undefined) {
       if (openParens > 0) {
-        warnings.push("Missing )");
+        warnings.pushIfAbsent("Missing )");
         return {tree: list, warnings: warnings};
       }
       return {tree: list.pop(), warnings: warnings};
     } else if (openParens == 0 && list.length > 0) {
-      warnings.push("Already closed");
+      warnings.pushIfAbsent("Already closed");
       return {tree: list.pop(), warnings: warnings};
     } else if (token === "(") {
       if (input[0] === "(")
