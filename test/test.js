@@ -252,7 +252,7 @@ describe('#renderExprAsLaTeX', function() {
     it('should render the official expressions correctly', function() {
         expressions.forEach(function (exprObj, idx) {
             var expr = exprObj.expr;
-            equal(renderExprAsLaTeX(expr), exprsRenderedAsLaTeX[idx]);
+            equal(renderExprAsLaTeX(expr).latex, exprsRenderedAsLaTeX[idx]);
         });
     });
 });
@@ -261,19 +261,25 @@ var renderLispAsLaTeX = clubExpr.renderLispAsLaTeX;
 
 describe('#renderLispAsLaTeX', function() {
     it('should render a single expression with one arg', function() {
-        equal(renderLispAsLaTeX('(Racine b)'), '\\sqrt{b}');
+        equal(renderLispAsLaTeX('(Racine b)').latex, '\\sqrt{b}');
     });
 
     it('should render a single expression with two args', function() {
-        equal(renderLispAsLaTeX('(Somme a b)'), 'a+b');
+        equal(renderLispAsLaTeX('(Somme a b)').latex, 'a+b');
     });
 
     it('should render a nested expression', function() {
-        equal(renderLispAsLaTeX('(Somme a (Produit b c))'), 'a+b c');
+        equal(renderLispAsLaTeX('(Somme a (Produit b c))').latex, 'a+b c');
     });
 
     it('should render an expression with a greek letter', function() {
-        equal(renderLispAsLaTeX('(Produit 2 pi)'), '2 \\pi');
+        equal(renderLispAsLaTeX('(Produit 2 pi)').latex, '2 \\pi');
+    });
+
+    it('should render an expression and warn us if a ) is missing', function() {
+        var result = renderLispAsLaTeX('(Somme 1 2');
+        sdEqual(result.latex, '1+2');
+        sdEqual(result.warnings, ["Missing )"]);
     });
 
     it('should fail if the command is unknown', function() {

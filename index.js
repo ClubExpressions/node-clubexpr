@@ -170,9 +170,13 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     var cmd = expr[0];
     var nbArgs = expr.length - 1;
-    var args = expr.slice(1).map(function (expr, idx) {
-        return exports.renderExprAsLaTeX(expr, cmd, idx);
-    });
+    var args = [];
+    var warnings = [];
+    for (var i = 1; i <= nbArgs; i++) {
+      var result = exports.renderExprAsLaTeX(expr[i], cmd, i-1);
+      args.push(result.latex);
+      warnings.concat(result.warnings);
+    }
     var latex = '';
     if (cmd === 'Somme') {
       twoOrMoreArgs('Somme', nbArgs);
@@ -214,17 +218,17 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     }
     if (latex === '') throw new Error("Unknown cmd: " + cmd);
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
-    return latex;
+    return {latex: latex, warnings: []};
   } else {
     if (numRegex.test(expr)) {
       // number
-      return expr;
+      return {latex: expr, warnings: []};
     } else if (expr.length == 1) {
       // single letter
-      return expr;
+      return {latex: expr, warnings: []};
     } else if (greekLetters.indexOf(expr) >= 0) {
       // greek letter
-      return "\\" + expr;
+      return {latex: "\\" + expr, warnings: []};
     } else {
       throw new Error("Bad leaf: " + expr);
     }
@@ -240,7 +244,8 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
 exports.renderLispAsLaTeX = function (src) {
     var parseResult = exports.parse(src);
     var latexResult = exports.renderExprAsLaTeX(parseResult.tree);
-    return latexResult;
+    return {latex: latexResult.latex,
+            warnings: parseResult.warnings.concat(latexResult.warnings)};
 }
 
 Array.prototype.pushIfAbsent = function(val) {
