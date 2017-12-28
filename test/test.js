@@ -278,19 +278,27 @@ var renderLispAsLaTeX = clubExpr.renderLispAsLaTeX;
 
 describe('#renderLispAsLaTeX', function() {
     it('should render a single expression with one arg', function() {
-        equal(renderLispAsLaTeX('(Racine b)').latex, '\\sqrt{b}');
+        var result = renderLispAsLaTeX('(Racine b)');
+        equal(result.latex, '\\sqrt{b}');
+        dEqual(result.warnings, []);
     });
 
     it('should render a single expression with two args', function() {
-        equal(renderLispAsLaTeX('(Somme a b)').latex, 'a+b');
+        var result = renderLispAsLaTeX('(Somme a b)');
+        equal(result.latex, 'a+b');
+        dEqual(result.warnings, []);
     });
 
     it('should render a nested expression', function() {
-        equal(renderLispAsLaTeX('(Somme a (Produit b c))').latex, 'a+b c');
+        var result = renderLispAsLaTeX('(Somme a (Produit b c))');
+        equal(result.latex, 'a+b c');
+        dEqual(result.warnings, []);
     });
 
     it('should render an expression with a greek letter', function() {
-        equal(renderLispAsLaTeX('(Produit 2 pi)').latex, '2 \\pi');
+        var result = renderLispAsLaTeX('(Produit 2 pi)');
+        equal(result.latex, '2 \\pi');
+        dEqual(result.warnings, []);
     });
 
     it('should render an expression and warn us if a ) is missing', function() {
