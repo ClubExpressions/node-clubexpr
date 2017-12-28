@@ -90,7 +90,7 @@ var buildTree = function(input, list, warnings, openParens) {
       if (input[0] === ")")
         throw new Error("Missing cmd");
       var result1 = buildTree(input, [], [], openParens + 1);
-      list.push(result1.tree);
+      if (result1.tree.length > 0) list.push(result1.tree);
       var result2 = buildTree(input, list, warnings, openParens);
       return {tree: result2.tree,
               warnings: warnings.concatIfAbsent(result1.warnings,
