@@ -264,6 +264,7 @@ Array.prototype.pushIfAbsent = function(val) {
 
 Array.prototype.concatIfAbsent = function(val) {
     for (var i = 0; i < val.length; i += 1) {
+        if (val[i] == "Already closed") return ["Already closed"];
         if (this.indexOf(val[i]) == -1) this.push(val[i]);
     }
     return this;

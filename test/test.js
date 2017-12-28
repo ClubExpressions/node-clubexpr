@@ -99,7 +99,7 @@ describe('#parse', function() {
 
     it('should warn us if a ( is trailing', function() {
         var result = parse('(a b) (');
-        dEqual(result.warnings, ["Missing cmd", "Already closed"]);
+        dEqual(result.warnings, ["Already closed"]);
         dEqual(result.tree, ['a', 'b']);
     });
 
