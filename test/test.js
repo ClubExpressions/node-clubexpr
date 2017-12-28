@@ -303,7 +303,7 @@ describe('#renderLispAsLaTeX', function() {
 
     it('should render an expression and warn us if a ) is missing', function() {
         var result = renderLispAsLaTeX('(Somme 1 2');
-        dEqual(result.latex, '1+2');
+        equal(result.latex, '1+2');
         dEqual(result.warnings, ["Missing )"]);
     });
 
