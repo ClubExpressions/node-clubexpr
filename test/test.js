@@ -69,7 +69,6 @@ describe('#parse', function() {
     it('should warn us if a ( is the last significant char', function() {
         var result = parse('(a b (');
         sdEqual(result.warnings, ["Missing cmd"]);
-        //sdEqual(result.warnings, ["Missing )", "Missing cmd"]);
         sdEqual(result.tree, ['a', 'b']);
     });
 
