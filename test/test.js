@@ -4,6 +4,7 @@ var chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 var assert = chai.assert;
 var equal = chai.assert.equal;
+var dEqual = chai.assert.deepEqual;
 var sdEqual = chai.assert.shallowDeepEqual;
 function treeEquals(x, y) {return sdEqual(x.tree, y);}
 
@@ -68,38 +69,38 @@ describe('#parse', function() {
 
     it('should warn us if a ( is the last significant char', function() {
         var result = parse('(a b (');
-        sdEqual(result.warnings, ["Missing cmd"]);
-        sdEqual(result.tree, ['a', 'b']);
+        dEqual(result.warnings, ["Missing cmd", "Missing )"]);
+        assert.deepEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ) is missing', function() {
         var result = parse('(a b');
-        sdEqual(result.warnings, ["Missing )"]);
-        sdEqual(result.tree, ['a', 'b']);
+        dEqual(result.warnings, ["Missing )"]);
+        dEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ) is missing in a nested expression', function() {
         var result = parse('(a (b 2)');
-        sdEqual(result.warnings, ["Missing )"]);
-        sdEqual(result.tree, ['a', ['b', '2']]);
+        dEqual(result.warnings, ["Missing )"]);
+        dEqual(result.tree, ['a', ['b', '2']]);
     });
 
     it('should warn us if the expr is already closed', function() {
         var result = parse('(a b) c');
-        sdEqual(result.warnings, ["Already closed"]);
-        sdEqual(result.tree, ['a', 'b']);
+        dEqual(result.warnings, ["Already closed"]);
+        dEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ) is trailing', function() {
         var result = parse('(a b))');
-        sdEqual(result.warnings, ["Already closed"]);
-        sdEqual(result.tree, ['a', 'b']);
+        dEqual(result.warnings, ["Already closed"]);
+        dEqual(result.tree, ['a', 'b']);
     });
 
     it('should warn us if a ( is trailing', function() {
         var result = parse('(a b) (');
-        sdEqual(result.warnings, ["Missing cmd"]);
-        sdEqual(result.tree, ['a', 'b']);
+        dEqual(result.warnings, ["Missing cmd", "Already closed"]);
+        dEqual(result.tree, ['a', 'b']);
     });
 
     it('should fail if a command is missing', function() {
@@ -294,8 +295,8 @@ describe('#renderLispAsLaTeX', function() {
 
     it('should render an expression and warn us if a ) is missing', function() {
         var result = renderLispAsLaTeX('(Somme 1 2');
-        sdEqual(result.latex, '1+2');
-        sdEqual(result.warnings, ["Missing )"]);
+        dEqual(result.latex, '1+2');
+        dEqual(result.warnings, ["Missing )"]);
     });
 
     it('should fail if the command is unknown', function() {
@@ -328,17 +329,17 @@ var replace = clubExpr.replaceValuesWith;
 
 describe('#replace', function() {
     it('should replace "a" with "x" and 1 with 2 in a flat expr', function() {
-        sdEqual(replace(['Somme', 'a', 1], {'a':'x', 1:2}),
+        dEqual(replace(['Somme', 'a', 1], {'a':'x', 1:2}),
                         ['Somme', 'x', 2]);
     });
 
     it('should replace "a" with "x" and conversely in a flat expr', function() {
-        sdEqual(replace(['Somme', 'a', 'x'], {'a':'x', 'x':'a'}),
+        dEqual(replace(['Somme', 'a', 'x'], {'a':'x', 'x':'a'}),
                         ['Somme', 'x', 'a']);
     });
 
     it('should replace "a" with "x" and 1 with 2 in a nested expr', function() {
-        sdEqual(replace(['Produit', ['Somme', 1, 'a'], 3], {'a':'x', 1:2}),
+        dEqual(replace(['Produit', ['Somme', 1, 'a'], 3], {'a':'x', 1:2}),
                         ['Produit', ['Somme', 2, 'x'], 3]);
     });
 });
