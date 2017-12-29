@@ -147,17 +147,17 @@ var skipMultSign = function (prevArg, arg) {
 }
 
 function oneArg(op, nbArgs) {
-  if (nbArgs < 1) throw new Error(op + ": nb args < 1");
-  if (nbArgs > 1) throw new Error(op + ": nb args > 1");
+  if (nbArgs < 1) return op + ": nb args < 1";
+  if (nbArgs > 1) return op + ": nb args > 1";
 }
 
 function twoArgs(op, nbArgs) {
-  if (nbArgs < 2) throw new Error(op + ": nb args < 2");
-  if (nbArgs > 2) throw new Error(op + ": nb args > 2");
+  if (nbArgs < 2) return op + ": nb args < 2";
+  if (nbArgs > 2) return op + ": nb args > 2";
 }
 
 function twoOrMoreArgs(op, nbArgs) {
-  if (nbArgs < 2) throw new Error(op + ": nb args < 2");
+  if (nbArgs < 2) return op + ": nb args < 2";
 }
 
 var numRegex = /^[-]?\d+([\.,]\d+)?$/;
@@ -189,13 +189,17 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
     }
     var latex = '';
     if (cmd === 'Somme') {
-      twoOrMoreArgs('Somme', nbArgs);
+      warnings.pushIfAbsent(twoOrMoreArgs(cmd, nbArgs));
+      while (args.length < 2) args.push("?");
       latex = args.join('+');
     } else if (cmd === 'Diff') {
-      twoArgs('Diff', nbArgs);
-      latex = args.join('-');
+      warnings.pushIfAbsent(twoArgs(cmd, nbArgs));
+      while (args.length < 2) args.push("?");
+      latex = args[0] + '-' + args[1];
+      if (args.length > 2) latex += '⚠️';
     } else if (cmd === 'Produit') {
-      twoOrMoreArgs('Produit', nbArgs);
+      warnings.pushIfAbsent(twoOrMoreArgs(cmd, nbArgs));
+      while (args.length < 2) args.push("?");
       var prevArg = args[0];
       latex = args[0];
       for (var i = 1; i < args.length; i++) {
@@ -207,28 +211,43 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
           prevArg = arg;
       }
     } else if (cmd === 'Quotient') {
-      twoArgs('Quotient', nbArgs);
+      warnings.pushIfAbsent(twoArgs(cmd, nbArgs));
+      while (args.length < 2) args.push("?");
       latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
+      if (args.length > 2) latex += '⚠️';
     } else if (cmd === 'Opposé') {
-      oneArg('Opposé', nbArgs);
+      warnings.pushIfAbsent(oneArg(cmd, nbArgs));
+      while (args.length < 1) args.push("?");
       latex = "-" + args[0];
+      if (args.length > 1) latex += '⚠️';
     } else if (cmd === 'Inverse') {
-      oneArg('Inverse', nbArgs);
+      warnings.pushIfAbsent(oneArg(cmd, nbArgs));
+      while (args.length < 1) args.push("?");
       latex = "\\frac{1}{" + args[0] + "}";
+      if (args.length > 1) latex += '⚠️';
     } else if (cmd === 'Carré') {
-      oneArg('Carré', nbArgs);
+      warnings.pushIfAbsent(oneArg(cmd, nbArgs));
+      while (args.length < 1) args.push("?");
       // curly brackets for same code than with Puissance
       latex = "{" + args[0] + "}^{2}";
+      if (args.length > 1) latex += '⚠️';
     } else if (cmd === 'Puissance') {
-      twoArgs('Puissance', nbArgs);
+      warnings.pushIfAbsent(twoArgs(cmd, nbArgs));
+      while (args.length < 2) args.push("?");
       latex = "{" + args[0] + "}^{" + args[1] + "}";
+      if (args.length > 2) latex += '⚠️';
     } else if (cmd === 'Racine') {
-      oneArg('Racine', nbArgs);
+      warnings.pushIfAbsent(oneArg(cmd, nbArgs));
+      while (args.length < 1) args.push("?");
       latex = "\\sqrt{" + args[0] + "}";
+      if (args.length > 1) latex += '⚠️';
     }
-    if (latex === '') throw new Error("Unknown cmd: " + cmd);
+    if (latex === '') {
+      warnings.pushIfAbsent("Unknown cmd: " + cmd);
+      latex = '?';
+    }
     if (parens(cmd, parentCmd, pos)) latex = '\\left(' + latex + '\\right)';
-    return {latex: latex, warnings: []};
+    return {latex: latex, warnings: warnings};
   } else {
     if (numRegex.test(expr)) {
       // number
@@ -259,6 +278,7 @@ exports.renderLispAsLaTeX = function (src) {
 }
 
 Array.prototype.pushIfAbsent = function(val) {
+    if (typeof val == "undefined") return;
     if (this.indexOf(val) == -1) this.push(val);
 };
 

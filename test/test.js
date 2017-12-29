@@ -307,24 +307,46 @@ describe('#renderLispAsLaTeX', function() {
         dEqual(result.warnings, ["Missing )"]);
     });
 
-    it('should fail if the command is unknown', function() {
-        assert.throw(function () {renderLispAsLaTeX('(Unk a b)');},
-                     Error, "Unknown cmd: Unk");
+    it('should warn us if the command is unknown', function() {
+        var result = renderLispAsLaTeX('(Unk a b)');
+        equal(result.latex, '?');
+        dEqual(result.warnings, ["Unknown cmd: Unk"]);
     });
 
-    it('should fail if too few args for Somme', function() {
-        assert.throw(function () {renderLispAsLaTeX('(Somme a)');},
-                     Error, "Somme: nb args < 2");
+    it('should render an expr with an incomplete cmd name and warn us', function() {
+        var result = renderLispAsLaTeX('(Somm)');
+        equal(result.latex, '?');
+        dEqual(result.warnings, ["Unknown cmd: Somm"]);
     });
 
-    it('should fail if too few args for Diff', function() {
-        assert.throw(function () {renderLispAsLaTeX('(Diff a)');},
-                     Error, "Diff: nb args < 2");
+    it('should render a Somme with no arg and warn us', function() {
+        var result = renderLispAsLaTeX('(Somme)');
+        equal(result.latex, '?+?');
+        dEqual(result.warnings, ["Somme: nb args < 2"]);
+    });
+
+    it('should render a Somme with one arg and warn us', function() {
+        var result = renderLispAsLaTeX('(Somme 1)');
+        equal(result.latex, '1+?');
+        dEqual(result.warnings, ["Somme: nb args < 2"]);
+    });
+
+    it('should warn us if too few args for Diff', function() {
+        var result = renderLispAsLaTeX('(Diff)');
+        equal(result.latex, '?-?');
+        dEqual(result.warnings, ["Diff: nb args < 2"]);
+    });
+
+    it('should warn us if too few args for Diff', function() {
+        var result = renderLispAsLaTeX('(Diff 1)');
+        equal(result.latex, '1-?');
+        dEqual(result.warnings, ["Diff: nb args < 2"]);
     });
 
     it('should fail if too many args for Diff', function() {
-        assert.throw(function () {renderLispAsLaTeX('(Diff a b c)');},
-                     Error, "Diff: nb args > 2");
+        var result = renderLispAsLaTeX('(Diff a b c)');
+        equal(result.latex, 'a-b⚠️');
+        dEqual(result.warnings, ["Diff: nb args > 2"]);
     });
 
     it('should fail if a leaf is not allowed', function() {
