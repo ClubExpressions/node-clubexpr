@@ -343,7 +343,7 @@ describe('#renderLispAsLaTeX', function() {
         dEqual(result.warnings, ["Diff: nb args < 2"]);
     });
 
-    it('should fail if too many args for Diff', function() {
+    it('should warn us if too many args for Diff', function() {
         var result = renderLispAsLaTeX('(Diff a b c)');
         equal(result.latex, 'a-b⚠️');
         dEqual(result.warnings, ["Diff: nb args > 2"]);
