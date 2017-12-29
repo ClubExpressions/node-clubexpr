@@ -143,7 +143,8 @@ exports.renderExprAsLisp = function (expr) {
 }
 
 var skipMultSign = function (prevArg, arg) {
-    return isNaN(parseInt(arg)) && (!isNaN(parseInt(prevArg)) || arg != prevArg);
+    return prevArg != "?" && arg != "?" &&
+           isNaN(parseInt(arg)) && (!isNaN(parseInt(prevArg)) || arg != prevArg);
 }
 
 function oneArg(op, nbArgs) {

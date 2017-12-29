@@ -349,6 +349,12 @@ describe('#renderLispAsLaTeX', function() {
         dEqual(result.warnings, ["Diff: nb args > 2"]);
     });
 
+    it('should warn us if too few args for Produit', function() {
+        var result = renderLispAsLaTeX('(Produit)');
+        equal(result.latex, '? \\times ?');
+        dEqual(result.warnings, ["Produit: nb args < 2"]);
+    });
+
     it('should fail if a leaf is not allowed', function() {
         assert.throw(function () {renderLispAsLaTeX('(a bc)');},
                      Error, "Bad leaf: bc");
