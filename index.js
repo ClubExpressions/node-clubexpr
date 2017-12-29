@@ -142,8 +142,8 @@ exports.renderExprAsLisp = function (expr) {
     }
 }
 
-var skipMultSign = function (lastArg, arg) {
-    return isNaN(parseInt(arg)) && (!isNaN(parseInt(lastArg)) || arg != lastArg);
+var skipMultSign = function (prevArg, arg) {
+    return isNaN(parseInt(arg)) && (!isNaN(parseInt(prevArg)) || arg != prevArg);
 }
 
 function oneArg(op, nbArgs) {
@@ -196,15 +196,15 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       latex = args.join('-');
     } else if (cmd === 'Produit') {
       twoOrMoreArgs('Produit', nbArgs);
-      var lastArg = args[0];
+      var prevArg = args[0];
       latex = args[0];
       for (var i = 1; i < args.length; i++) {
           var arg = args[i];
-          if (skipMultSign(lastArg, arg))
+          if (skipMultSign(prevArg, arg))
               latex = latex + ' ' + arg;
           else
               latex = latex + ' \\times ' + arg;
-          lastArg = arg;
+          prevArg = arg;
       }
     } else if (cmd === 'Quotient') {
       twoArgs('Quotient', nbArgs);
@@ -370,13 +370,13 @@ exports.properties = function (expr, parentCmd, pos) {
     }
     // * signe ×
     if (cmd === 'Produit') {
-        var lastArg = args[0];
+        var prevArg = args[0];
         for (var i = 1; i < args.length; i++) {
             var arg = args[i];
-            if (skipMultSign(lastArg, arg)) {
+            if (skipMultSign(prevArg, arg)) {
                 newProps.conventions.push('signe ×');
             }
-            lastArg = arg;
+            prevArg = arg;
         }
     }
     // * mult-div
