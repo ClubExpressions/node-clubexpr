@@ -359,17 +359,17 @@ exports.properties = function (expr, parentCmd, pos) {
   if (typeof expr === 'object') {
     // Init of the returned object
     var newProps = new Properties();
-    // Recursion
     var cmd = expr[0];
     newProps.nature = cmd;
     newProps.ops.push(cmd);
     newProps.nbOps = newProps.nbOps + 1;
     newProps.uniqueOps.pushIfAbsent(cmd);
+    // Process children (recursion)
     var args = expr.slice(1);
     var propsArray = args.map(function (expr, idx) {
       return exports.properties(expr, cmd, idx);
     });
-    // Process children
+    // Merge the properties of the args
     for (var i = 0; i < propsArray.length; i += 1) {
       var props = propsArray[i];
       newProps.conventions = newProps.conventions.concat(props.conventions);
