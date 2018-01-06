@@ -366,16 +366,16 @@ var replace = clubExpr.replaceValuesWith;
 describe('#replace', function() {
     it('should replace "a" with "x" and 1 with 2 in a flat expr', function() {
         dEqual(replace(['Somme', 'a', 1], {'a':'x', 1:2}),
-                        ['Somme', 'x', 2]);
+                       ['Somme', 'x', 2]);
     });
 
     it('should replace "a" with "x" and conversely in a flat expr', function() {
         dEqual(replace(['Somme', 'a', 'x'], {'a':'x', 'x':'a'}),
-                        ['Somme', 'x', 'a']);
+                       ['Somme', 'x', 'a']);
     });
 
     it('should replace "a" with "x" and 1 with 2 in a nested expr', function() {
         dEqual(replace(['Produit', ['Somme', 1, 'a'], 3], {'a':'x', 1:2}),
-                        ['Produit', ['Somme', 2, 'x'], 3]);
+                       ['Produit', ['Somme', 2, 'x'], 3]);
     });
 });
