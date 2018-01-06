@@ -361,6 +361,29 @@ describe('#renderLispAsLaTeX', function() {
     });
 });
 
+var properties = clubExpr.properties;
+
+describe('#properties', function() {
+    it('should detect all the properties of a flat expr', function() {
+        dEqual(properties(['Somme', 'a', 1]),
+                {conventions: [],
+                 depth: 1,
+                 leaves: 2,
+                 letters: 1,
+                 nature: "Somme",
+                 nbOps: 1,
+                 numbers: 1,
+                 ops: ["Somme"],
+                 uniqueOps: ["Somme"]});
+    });
+
+    it('should not error on the official expressions', function() {
+        expressions.forEach(function (exprObj) {
+            properties(exprObj.expr);
+        });
+    });
+});
+
 var replace = clubExpr.replaceValuesWith;
 
 describe('#replace', function() {
