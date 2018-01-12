@@ -1,6 +1,6 @@
 {
   "name": "clubexpr",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "Expressions and utilities for the Club of Expressions",
   "main": "index.js",
   "scripts": {
