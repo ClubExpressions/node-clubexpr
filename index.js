@@ -276,7 +276,8 @@ exports.renderLispAsLaTeX = function (src) {
     var parseResult = exports.parse(src);
     var latexResult = exports.renderExprAsLaTeX(parseResult.tree);
     return {latex: latexResult.latex,
-            warnings: parseResult.warnings.concatIfAbsent(latexResult.warnings)};
+            warnings: parseResult.warnings.concatIfAbsent(latexResult.warnings)
+                                          .reverse()};
 }
 
 Array.prototype.pushIfAbsent = function(val) {
