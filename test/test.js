@@ -345,7 +345,7 @@ describe('#renderLispAsLaTeX', function() {
 
     it('should warn us if too many args for Diff', function() {
         var result = renderLispAsLaTeX('(Diff a b c)');
-        equal(result.latex, 'a-b⚠️');
+        equal(result.latex, 'a-b\\bigotimes');
         dEqual(result.warnings, ["Diff: nb args > 2"]);
     });
 

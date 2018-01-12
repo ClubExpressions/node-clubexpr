@@ -178,6 +178,7 @@ var greekLetters = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'varepsilon',
  * @return LaTex source
  */
 exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
+  var warnSign = '\\bigotimes';
   if (typeof expr === 'object') {
     var cmd = expr[0];
     var nbArgs = expr.length - 1;
@@ -197,7 +198,7 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       warnings.pushIfAbsent(twoArgs(cmd, nbArgs));
       while (args.length < 2) args.push("?");
       latex = args[0] + '-' + args[1];
-      if (args.length > 2) latex += '⚠️';
+      if (args.length > 2) latex += warnSign;
     } else if (cmd === 'Produit') {
       warnings.pushIfAbsent(twoOrMoreArgs(cmd, nbArgs));
       while (args.length < 2) args.push("?");
@@ -215,33 +216,33 @@ exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
       warnings.pushIfAbsent(twoArgs(cmd, nbArgs));
       while (args.length < 2) args.push("?");
       latex = "\\frac{" + args[0] + "}{" + args[1] + "}";
-      if (args.length > 2) latex += '⚠️';
+      if (args.length > 2) latex += warnSign;
     } else if (cmd === 'Opposé') {
       warnings.pushIfAbsent(oneArg(cmd, nbArgs));
       while (args.length < 1) args.push("?");
       latex = "-" + args[0];
-      if (args.length > 1) latex += '⚠️';
+      if (args.length > 1) latex += warnSign;
     } else if (cmd === 'Inverse') {
       warnings.pushIfAbsent(oneArg(cmd, nbArgs));
       while (args.length < 1) args.push("?");
       latex = "\\frac{1}{" + args[0] + "}";
-      if (args.length > 1) latex += '⚠️';
+      if (args.length > 1) latex += warnSign;
     } else if (cmd === 'Carré') {
       warnings.pushIfAbsent(oneArg(cmd, nbArgs));
       while (args.length < 1) args.push("?");
       // curly brackets for same code than with Puissance
       latex = "{" + args[0] + "}^{2}";
-      if (args.length > 1) latex += '⚠️';
+      if (args.length > 1) latex += warnSign;
     } else if (cmd === 'Puissance') {
       warnings.pushIfAbsent(twoArgs(cmd, nbArgs));
       while (args.length < 2) args.push("?");
       latex = "{" + args[0] + "}^{" + args[1] + "}";
-      if (args.length > 2) latex += '⚠️';
+      if (args.length > 2) latex += warnSign;
     } else if (cmd === 'Racine') {
       warnings.pushIfAbsent(oneArg(cmd, nbArgs));
       while (args.length < 1) args.push("?");
       latex = "\\sqrt{" + args[0] + "}";
-      if (args.length > 1) latex += '⚠️';
+      if (args.length > 1) latex += warnSign;
     }
     if (latex === '') {
       warnings.pushIfAbsent("Unknown cmd: " + cmd);
