@@ -345,13 +345,13 @@ describe('#renderLispAsLaTeX', function() {
 
     it('should warn us if too many args for Diff', function() {
         var result = renderLispAsLaTeX('(Diff a b c)');
-        equal(result.latex, 'a-b\\bigotimes');
+        equal(result.latex, 'a-b\\otimes');
         dEqual(result.warnings, ["Diff: nb args > 2"]);
     });
 
     it('should warn us if too many args for Diff and paren missing', function() {
         var result = renderLispAsLaTeX('(Diff a b c');
-        equal(result.latex, 'a-b\\bigotimes');
+        equal(result.latex, 'a-b\\otimes');
         dEqual(result.warnings, ["Diff: nb args > 2", "Missing )"]);
     });
 

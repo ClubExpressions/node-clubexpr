@@ -178,7 +178,7 @@ var greekLetters = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'varepsilon',
  * @return LaTex source
  */
 exports.renderExprAsLaTeX = function (expr, parentCmd, pos) {
-  var warnSign = '\\bigotimes';
+  var warnSign = '\\otimes';
   if (typeof expr === 'object') {
     var cmd = expr[0];
     var nbArgs = expr.length - 1;
