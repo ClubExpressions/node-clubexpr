@@ -236,6 +236,7 @@ var exprsRenderedAsLaTeX = [
             '\\frac{1}{{a}^{2}}',
             '\\sqrt{{a}^{2}}',
             '{a}^{2}+{b}^{2}',
+            '{a}^{2}-{b}^{2}',
             '\\sqrt{{a}^{2}+{b}^{2}}',
             'a \\left(1+2 a\\right)',
             '1 a-\\left(2+a\\right)',
