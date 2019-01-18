@@ -572,7 +572,7 @@ exports.expressions = function () {
    "expr": [Q,a,1]},
   {"nom" : "Nombre divisé par une lettre",
    "conv": [],
-   "expr": [Q,1,a]},
+   "expr": [Q,2,a]},
   {"nom" : "Quotient de lettres",
    "conv": [],
    "expr": [Q,a,b]},
