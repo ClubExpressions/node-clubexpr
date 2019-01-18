@@ -523,7 +523,7 @@ exports.expressions = function () {
   // autour des expressions au numérateur et au dénominateur sont facultatives.
   var F = 'fraction';
 
-  // The expressions (from the boss himself)
+  // The expressions
   return [
   {"nom" : "Somme de deux nombres",
    "conv": [],
