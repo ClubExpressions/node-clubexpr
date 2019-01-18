@@ -525,6 +525,17 @@ exports.expressions = function () {
 
   // The expressions
   return [
+  // {"nom" : "",
+  //  "conv": [],
+  //  "expr": [Q,a,[P,2,b]]}, // pour P/(2pi)
+  // {"nom" : "",
+  //  "conv": [],
+  //  "expr": [C,[D,a,b]]},
+  // {"nom" : "",
+  //  "conv": [],
+  //  "expr": [D,[C,a],[C,b]]},
+
+
   {"nom" : "Somme de deux nombres",
    "conv": [],
    "expr": [S,1,2]},
