@@ -235,8 +235,10 @@ var exprsRenderedAsLaTeX = [
             '{\\left(\\frac{1}{a}\\right)}^{2}',
             '\\frac{1}{{a}^{2}}',
             '\\sqrt{{a}^{2}}',
+            '{\\sqrt{a}}^{2}',
             '{a}^{2}+{b}^{2}',
             '{a}^{2}-{b}^{2}',
+            '\\sqrt{a+b}',
             '\\sqrt{{a}^{2}+{b}^{2}}',
             'a \\left(1+2 a\\right)',
             '1 a-\\left(2+a\\right)',
@@ -245,7 +247,6 @@ var exprsRenderedAsLaTeX = [
             '1-2 \\left(a+3\\right)',
             '1 a-a+2',
             'a-\\frac{a}{1}+2',
-            '{a}^{2}-a+1',
             '{\\left(a+1\\right)}^{2}-2',
             '\\left(a+1\\right) \\left(a-2\\right)',
             '-{a}^{2}+1',
@@ -271,6 +272,16 @@ describe('#renderExprAsLaTeX', function() {
         expressions.forEach(function (exprObj, idx) {
             var expr = exprObj.expr;
             equal(renderExprAsLaTeX(expr).latex, exprsRenderedAsLaTeX[idx]);
+        });
+    });
+});
+
+describe('#uniques:', function() {
+    it('we should have no duplicates in the expr list', function() {
+        var exprs = exprsRenderedAsLaTeX;
+        var uniques = exprs.reduce((x, y) => x.includes(y) ? x : [...x, y], []);
+        exprs.forEach(function (expr, idx) {
+            equal(uniques[idx], expr);
         });
     });
 });
