@@ -261,14 +261,11 @@ var exprsRenderedAsLaTeX = [
             'a-\\frac{a}{1}+2',
             '{\\left(a+1\\right)}^{2}-2',
             '\\left(a+1\\right) \\left(a-2\\right)',
-
             '\\left(a-b\\right) \\left(c+d\\right)',
             '\\left(a+b\\right) \\left(c-d\\right)',
             '{a}^{2}+2 b c+{d}^{2}',
             '{a}^{2}-2 b c+{d}^{2}',
             '\\left(2 a+3\\right) \\left(b-4\\right)',
-
-
             '-{a}^{2}+1',
             '1 {a}^{2}+a',
             '1-2 {a}^{2}',
