@@ -198,6 +198,7 @@ var exprsRenderedAsLaTeX = [
             '\\frac{2}{a}',
             '\\frac{a}{b}',
             '\\frac{a+1}{2}',
+            '\\frac{a-1}{2}',
             '{1}^{2}',
             '{a}^{2}',
             '{a}^{1}',
