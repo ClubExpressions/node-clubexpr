@@ -536,6 +536,11 @@ exports.expressions = function () {
   //  "expr": [D,[C,a],[C,b]]},
 
 
+  // TODO
+  // "(Racine (Somme (Carré 1) (Carré 2)))",
+  // "(Racine (Diff (Carré 2) (Carré 2)))",
+  // "(Racine (Somme 1 (Racine (Somme 2 3))))"
+
   {"nom" : "Somme de deux nombres",
    "conv": [],
    "expr": [S,1,2]},
